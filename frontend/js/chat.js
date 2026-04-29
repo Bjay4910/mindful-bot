@@ -271,10 +271,11 @@ function renderChallengeResult(result, card) {
         </div>
     `;
     scrollToBottom();
-    document.getElementById('close-challenge').addEventListener('click', async () => {
+    // Refresh sidebar score immediately so user sees updated points right away
+    loadUserScore();
+    document.getElementById('close-challenge').addEventListener('click', () => {
         card.remove();
         currentChallenge = null;
-        await loadUserScore();
         appendBotMessage(
             result.is_correct
                 ? `Great job! You scored ${result.score}/10. Let's keep going — what else would you like to explore?`

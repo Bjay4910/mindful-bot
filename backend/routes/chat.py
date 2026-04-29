@@ -185,7 +185,7 @@ def evaluate_challenge():
         except Exception:
             pass
 
-    # Update user score
+    # Update user score via upsert
     try:
         db = get_client()
         existing = db.table("scores").select("*").eq("user_id", user.id).execute()
@@ -193,19 +193,22 @@ def evaluate_challenge():
             current = existing.data[0]
             new_total = current["total_points"] + points_earned
             new_streak = current["streak"] + 1 if result.get("is_correct") else 0
-            db.table("scores").update({
-                "total_points": new_total,
-                "streak": new_streak,
-                "updated_at": "now()",
-            }).eq("user_id", user.id).execute()
+            new_challenges = current.get("challenges_completed", 0) + 1
         else:
-            db.table("scores").insert({
-                "user_id": user.id,
-                "total_points": points_earned,
-                "streak": 1 if result.get("is_correct") else 0,
-            }).execute()
-    except Exception:
-        pass
+            new_total = points_earned
+            new_streak = 1 if result.get("is_correct") else 0
+            new_challenges = 1
+
+        db.table("scores").upsert({
+            "user_id": user.id,
+            "total_points": new_total,
+            "streak": new_streak,
+            "challenges_completed": new_challenges,
+            "updated_at": "now()",
+        }, on_conflict="user_id").execute()
+        print(f"[INFO] score updated: user={user.id} total={new_total} streak={new_streak} challenges={new_challenges}")
+    except Exception as e:
+        print(f"[ERROR] score upsert failed: {e}")
 
     result["points_earned"] = points_earned
     return jsonify(result)

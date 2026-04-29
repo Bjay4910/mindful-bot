@@ -43,8 +43,12 @@ CREATE TABLE IF NOT EXISTS public.scores (
     user_id UUID UNIQUE REFERENCES public.users(id) ON DELETE CASCADE,
     total_points INTEGER DEFAULT 0,
     streak INTEGER DEFAULT 0,
+    challenges_completed INTEGER DEFAULT 0,
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
+
+-- Migration: add challenges_completed if upgrading an existing database
+-- ALTER TABLE public.scores ADD COLUMN IF NOT EXISTS challenges_completed INTEGER DEFAULT 0;
 
 -- Enable Row Level Security
 ALTER TABLE public.users ENABLE ROW LEVEL SECURITY;
@@ -75,6 +79,9 @@ CREATE POLICY "Users can view own challenges" ON public.challenges
 
 CREATE POLICY "Users can view own scores" ON public.scores
     FOR SELECT USING (auth.uid() = user_id);
+
+CREATE POLICY "Users can insert own scores" ON public.scores
+    FOR INSERT WITH CHECK (auth.uid() = user_id);
 
 CREATE POLICY "Users can update own scores" ON public.scores
     FOR UPDATE USING (auth.uid() = user_id);
