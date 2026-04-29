@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" href="favicon.ico">
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+    <link rel="apple-touch-icon" href="apple-touch-icon.png">
+    <link rel="manifest" href="site.webmanifest">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact — mindful-bot</title>
+    <link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css">
+    <link rel="stylesheet" href="css/main.css">
+    <style>
+        .contact-page {
+            max-width: 520px;
+            margin: 0 auto;
+            padding: 56px 24px;
+        }
+        .contact-page h1 { margin-bottom: 8px; }
+        .contact-page > p { margin-bottom: 32px; }
+        .contact-sent { display: none; text-align: center; padding: 32px 0; }
+        .contact-sent h3 { margin-bottom: 8px; }
+    </style>
+</head>
+<body>
+    <nav class="topnav">
+        <a href="index.html" class="topnav-logo"><div class="logo-icon">M</div>mindful-bot</a>
+        <div class="topnav-links">
+            <a href="features.html">Features</a>
+            <a href="about.html">About</a>
+        </div>
+        <div class="topnav-actions">
+            <div id="nav-auth-links" style="display:flex; gap:8px;">
+                <button class="btn btn-ghost" data-open-login>Log in</button>
+                <button class="btn btn-primary" data-open-register>Get started</button>
+            </div>
+            <div id="nav-user-links" style="display:none; gap:8px; align-items:center;">
+                <span id="nav-username" style="font-size:0.875rem; color:var(--color-text-secondary);"></span>
+                <a href="#" id="logout-btn" class="btn btn-ghost btn-sm">Log out</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="contact-page page-enter">
+        <h1 data-aos="fade-up">Contact</h1>
+        <p data-aos="fade-up">Have a question or feedback? Send a message below or email directly at <a href="mailto:gyampoh.b.james@gmail.com" style="color:var(--color-primary);">gyampoh.b.james@gmail.com</a>.</p>
+
+        <form id="contact-form" data-aos="fade-up">
+            <div class="form-group">
+                <label>Your name</label>
+                <input type="text" id="c-name" class="input-field" placeholder="Jane Doe" required>
+            </div>
+            <div class="form-group">
+                <label>Email</label>
+                <input type="email" id="c-email" class="input-field" placeholder="you@example.com" required>
+            </div>
+            <div class="form-group">
+                <label>Message</label>
+                <textarea id="c-message" class="input-field" rows="5" placeholder="Your message..." required style="resize:vertical;"></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary" style="width:100%; justify-content:center;">Send message</button>
+        </form>
+
+        <div class="contact-sent" id="contact-sent">
+            <div style="font-size:2rem; margin-bottom:8px;">✅</div>
+            <h3>Message sent!</h3>
+            <p>Thanks for reaching out. We'll be in touch soon.</p>
+            <a href="index.html" class="btn btn-secondary" style="margin-top:16px; display:inline-flex;">Back to home</a>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="footer-inner">
+            <span>© 2026 mindful-bot</span>
+            <div class="footer-links">
+                <a href="privacy.html">Privacy</a>
+                <a href="terms.html">Terms</a>
+            </div>
+        </div>
+    </footer>
+
+    <div id="toast-container"></div>
+
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/config.js"></script>
+    <script src="js/main.js"></script>
+    <script>
+        document.getElementById('contact-form').addEventListener('submit', e => {
+            e.preventDefault();
+            // In a production app this would call a backend email endpoint.
+            // For this course project we just show a success state.
+            document.getElementById('contact-form').style.display = 'none';
+            document.getElementById('contact-sent').style.display = 'block';
+            showToast('Message sent!', 'success');
+        });
+    </script>
+    <!-- Auth Modal -->
+    <div id="auth-modal" class="modal-overlay hidden modal-backdrop">
+        <div class="modal-box modal-content">
+            <button id="close-auth-modal" class="btn btn-ghost btn-sm" style="float:right">✕</button>
+            <div class="auth-panel" id="login-panel">
+                <h2>Log in</h2><p class="modal-subtitle">Continue your learning journey.</p>
+                <form id="login-form">
+                    <div class="form-group"><label>Email</label><input type="email" name="email" class="input-field" required></div>
+                    <div class="form-group"><label>Password</label><input type="password" name="password" class="input-field" required></div>
+                    <div id="login-error" class="form-error"></div>
+                    <button type="submit" class="btn btn-primary" style="width:100%; justify-content:center; margin-top:8px;">Log in</button>
+                </form>
+                <p class="modal-switch">No account? <a href="#" id="switch-to-register">Create one</a></p>
+            </div>
+            <div class="auth-panel" id="register-panel" style="display:none;">
+                <h2>Create account</h2>
+                <form id="register-form">
+                    <div class="form-group"><label>Username</label><input type="text" name="username" class="input-field" required></div>
+                    <div class="form-group"><label>Email</label><input type="email" name="email" class="input-field" required></div>
+                    <div class="form-group"><label>Password</label><input type="password" name="password" class="input-field" required></div>
+                    <div id="register-error" class="form-error"></div>
+                    <button type="submit" class="btn btn-primary" style="width:100%; justify-content:center; margin-top:8px;">Create account</button>
+                </form>
+                <p class="modal-switch">Already have an account? <a href="#" id="switch-to-login">Log in</a></p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

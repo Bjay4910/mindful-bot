@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" href="favicon.ico">
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+    <link rel="apple-touch-icon" href="apple-touch-icon.png">
+    <link rel="manifest" href="site.webmanifest">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leaderboard — mindful-bot</title>
+    <link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css">
+    <link rel="stylesheet" href="css/main.css">
+    <style>
+        .lb-container {
+            max-width: 700px;
+            margin: 0 auto;
+            padding: 48px 24px;
+        }
+        .lb-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        .lb-header h1 { margin-bottom: 8px; }
+        .lb-header p { color: var(--color-text-secondary); }
+
+        .lb-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: var(--color-bg);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+        }
+        .lb-table th {
+            background: var(--color-bg-secondary);
+            padding: 12px 16px;
+            text-align: left;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--color-text-secondary);
+            border-bottom: 1px solid var(--color-border);
+        }
+        .lb-table td {
+            padding: 14px 16px;
+            font-size: 0.9rem;
+            border-bottom: 1px solid var(--color-border);
+        }
+        .lb-table tr:last-child td { border-bottom: none; }
+        .lb-table tr:hover td { background: var(--color-bg-secondary); }
+
+        .lb-rank { font-weight: 700; font-size: 1rem; width: 60px; }
+        .lb-username { font-weight: 500; }
+        .lb-points { font-weight: 700; color: var(--color-primary); }
+        .streak-badge { font-size: 0.85rem; }
+        .streak-badge.active { color: #c17d23; }
+
+        .current-user-row td { background: var(--color-primary-light) !important; }
+
+        .loading-row, .empty-row {
+            text-align: center;
+            color: var(--color-text-secondary);
+            padding: 32px 16px !important;
+        }
+
+        .lb-legend {
+            text-align: center;
+            color: var(--color-text-tertiary);
+            font-size: 0.8rem;
+            margin-top: 16px;
+        }
+    </style>
+</head>
+<body>
+    <nav class="topnav">
+        <a href="index.html" class="topnav-logo">
+            <div class="logo-icon">M</div>
+            mindful-bot
+        </a>
+        <div class="topnav-links">
+            <a href="chat.html">Chat</a>
+            <a href="dashboard.html">Dashboard</a>
+            <a href="leaderboard.html" class="active">Leaderboard</a>
+        </div>
+        <div class="topnav-actions">
+            <div id="nav-auth-links" style="display:flex; gap:8px;">
+                <button class="btn btn-ghost" data-open-login>Log in</button>
+                <button class="btn btn-primary" data-open-register>Get started</button>
+            </div>
+            <div id="nav-user-links" style="display:none; gap:8px; align-items:center;">
+                <span id="nav-username" style="font-size:0.875rem; color:var(--color-text-secondary);"></span>
+                <a href="#" id="logout-btn" class="btn btn-ghost btn-sm">Log out</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="lb-container page-enter">
+        <div class="lb-header" data-aos="fade-up">
+            <h1>Leaderboard</h1>
+            <p>Top learners ranked by recall challenge points.</p>
+        </div>
+
+        <table class="lb-table" data-aos="fade-up" data-aos-delay="80">
+            <thead>
+                <tr>
+                    <th>Rank</th>
+                    <th>Username</th>
+                    <th>Points</th>
+                    <th>Streak</th>
+                </tr>
+            </thead>
+            <tbody id="leaderboard-body">
+                <tr><td colspan="4" class="loading-row">
+                    <div class="spinner" style="margin:0 auto"></div>
+                </td></tr>
+            </tbody>
+        </table>
+        <p class="lb-legend">Your row is highlighted in blue. Refreshes every page load.</p>
+    </div>
+
+    <!-- Auth Modal -->
+    <div id="auth-modal" class="modal-overlay hidden modal-backdrop">
+        <div class="modal-box modal-content">
+            <button id="close-auth-modal" class="btn btn-ghost btn-sm" style="float:right">✕</button>
+            <div class="auth-panel" id="login-panel">
+                <h2>Log in</h2>
+                <p class="modal-subtitle">Log in to see your rank.</p>
+                <form id="login-form">
+                    <div class="form-group"><label>Email</label><input type="email" name="email" class="input-field" required></div>
+                    <div class="form-group"><label>Password</label><input type="password" name="password" class="input-field" required></div>
+                    <div id="login-error" class="form-error"></div>
+                    <button type="submit" class="btn btn-primary" style="width:100%; justify-content:center; margin-top:8px;">Log in</button>
+                </form>
+                <p class="modal-switch">No account? <a href="#" id="switch-to-register">Create one</a></p>
+            </div>
+            <div class="auth-panel" id="register-panel" style="display:none;">
+                <h2>Create account</h2>
+                <form id="register-form">
+                    <div class="form-group"><label>Username</label><input type="text" name="username" class="input-field" required></div>
+                    <div class="form-group"><label>Email</label><input type="email" name="email" class="input-field" required></div>
+                    <div class="form-group"><label>Password</label><input type="password" name="password" class="input-field" required></div>
+                    <div id="register-error" class="form-error"></div>
+                    <button type="submit" class="btn btn-primary" style="width:100%; justify-content:center; margin-top:8px;">Create account</button>
+                </form>
+                <p class="modal-switch">Already have an account? <a href="#" id="switch-to-login">Log in</a></p>
+            </div>
+        </div>
+    </div>
+    <div id="toast-container"></div>
+
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/config.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/leaderboard.js"></script>
+</body>
+</html>

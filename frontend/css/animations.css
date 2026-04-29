@@ -1,0 +1,126 @@
+/* AOS Overrides + Custom Animations — mindful-bot */
+
+/* AOS base (override transition timing) */
+[data-aos] {
+    transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1) !important;
+}
+
+/* Page load fade-in */
+@keyframes fadeInPage {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+.page-enter {
+    animation: fadeInPage 0.45s ease both;
+}
+
+/* Chat bubble appear */
+@keyframes bubbleIn {
+    from { opacity: 0; transform: translateY(8px) scale(0.98); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+.bubble-enter {
+    animation: bubbleIn 0.3s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* Challenge card slide-up */
+@keyframes slideUp {
+    from { opacity: 0; transform: translateY(40px) scale(0.97); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+.challenge-enter {
+    animation: slideUp 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* Score pulse */
+@keyframes scorePulse {
+    0%   { transform: scale(1); }
+    40%  { transform: scale(1.25); color: #0075de; }
+    100% { transform: scale(1); }
+}
+.score-pulse {
+    animation: scorePulse 0.5s ease both;
+}
+
+/* Typing indicator (three dots) */
+@keyframes typingDot {
+    0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+    30%            { transform: translateY(-4px); opacity: 1; }
+}
+.typing-dot {
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #9b9590;
+    animation: typingDot 1.2s infinite ease-in-out;
+}
+.typing-dot:nth-child(2) { animation-delay: 0.15s; }
+.typing-dot:nth-child(3) { animation-delay: 0.3s; }
+
+/* Streak fire flicker */
+@keyframes flicker {
+    0%, 100% { opacity: 1; }
+    50%       { opacity: 0.75; }
+}
+.flicker { animation: flicker 1.5s ease-in-out infinite; }
+
+/* Spinner */
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+.spinner {
+    width: 20px;
+    height: 20px;
+    border: 2px solid var(--color-border);
+    border-top-color: var(--color-primary);
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+}
+
+/* Modal backdrop */
+@keyframes backdropIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+.modal-backdrop {
+    animation: backdropIn 0.2s ease both;
+}
+
+/* Modal content */
+@keyframes modalIn {
+    from { opacity: 0; transform: translateY(20px) scale(0.97); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+.modal-content {
+    animation: modalIn 0.35s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* Feature card hover lift */
+.card-hover {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.card-hover:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-lg);
+}
+
+/* Progress bar fill */
+@keyframes progressFill {
+    from { width: 0%; }
+}
+.progress-bar-fill {
+    animation: progressFill 0.8s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* Notification slide-in */
+@keyframes notifIn {
+    from { opacity: 0; transform: translateX(100%); }
+    to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes notifOut {
+    from { opacity: 1; transform: translateX(0); }
+    to   { opacity: 0; transform: translateX(110%); }
+}
+.notif-enter { animation: notifIn 0.3s cubic-bezier(0.22, 1, 0.36, 1) both; }
+.notif-exit  { animation: notifOut 0.25s ease both; }

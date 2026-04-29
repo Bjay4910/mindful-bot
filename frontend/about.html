@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" href="favicon.ico">
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+    <link rel="apple-touch-icon" href="apple-touch-icon.png">
+    <link rel="manifest" href="site.webmanifest">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About — mindful-bot</title>
+    <link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css">
+    <link rel="stylesheet" href="css/main.css">
+    <style>
+        .about-content {
+            max-width: 680px;
+            margin: 0 auto;
+            padding: 56px 24px;
+        }
+        .about-content h1 { margin-bottom: 16px; }
+        .about-content p  { margin-bottom: 20px; font-size: 1rem; line-height: 1.8; }
+        .about-content h2 { margin: 40px 0 12px; font-size: 1.25rem; }
+        .tech-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: var(--color-bg-secondary);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-full);
+            padding: 4px 12px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            margin: 4px;
+        }
+        .tech-pills { margin-bottom: 32px; }
+    </style>
+</head>
+<body>
+    <nav class="topnav">
+        <a href="index.html" class="topnav-logo"><div class="logo-icon">M</div>mindful-bot</a>
+        <div class="topnav-links">
+            <a href="features.html">Features</a>
+            <a href="chat.html">Chat</a>
+            <a href="about.html" class="active">About</a>
+        </div>
+        <div class="topnav-actions">
+            <div id="nav-auth-links" style="display:flex; gap:8px;">
+                <button class="btn btn-ghost" data-open-login>Log in</button>
+                <button class="btn btn-primary" data-open-register>Get started</button>
+            </div>
+            <div id="nav-user-links" style="display:none; gap:8px; align-items:center;">
+                <span id="nav-username" style="font-size:0.875rem; color:var(--color-text-secondary);"></span>
+                <a href="#" id="logout-btn" class="btn btn-ghost btn-sm">Log out</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="about-content page-enter">
+        <h1 data-aos="fade-up">About mindful-bot</h1>
+        <p data-aos="fade-up">
+            mindful-bot is a <strong>cognitive offload resistance chatbot</strong> built as a project
+            for an Intelligent Systems course. The core idea is simple: most AI tools encourage you
+            to offload your thinking to the machine. mindful-bot does the opposite — it refuses to
+            hand you answers until you've made a genuine attempt to recall or reason first.
+        </p>
+
+        <h2 data-aos="fade-up">The problem it solves</h2>
+        <p data-aos="fade-up">
+            When you Google something or ask ChatGPT, you get the answer immediately. This is
+            convenient but terrible for learning. Research consistently shows that <em>active recall</em>
+            — trying to remember before checking — dramatically improves long-term retention compared
+            to passive reading or being told answers.
+        </p>
+        <p data-aos="fade-up">
+            mindful-bot uses the Socratic method: every question you ask is met with a question back.
+            After a few exchanges, a recall challenge appears testing what you've just discussed.
+            You earn points for correct answers and build streaks for consistent performance.
+        </p>
+
+        <h2 data-aos="fade-up">Tech stack</h2>
+        <div class="tech-pills" data-aos="fade-up">
+            <span class="tech-pill">HTML / CSS / JS</span>
+            <span class="tech-pill">Python Flask</span>
+            <span class="tech-pill">Supabase (PostgreSQL)</span>
+            <span class="tech-pill">Claude API (claude-sonnet-4-6)</span>
+            <span class="tech-pill">AOS Animations</span>
+            <span class="tech-pill">Notion Design System</span>
+        </div>
+
+        <h2 data-aos="fade-up">Contact</h2>
+        <p data-aos="fade-up">
+            Built by <strong>B. James Gyampoh</strong> · <a href="mailto:gyampoh.b.james@gmail.com" style="color:var(--color-primary);">gyampoh.b.james@gmail.com</a>
+        </p>
+        <p data-aos="fade-up">
+            <a href="contact.html" class="btn btn-secondary">Send a message</a>
+        </p>
+    </div>
+
+    <footer class="footer">
+        <div class="footer-inner">
+            <span>© 2026 mindful-bot</span>
+            <div class="footer-links">
+                <a href="privacy.html">Privacy</a>
+                <a href="terms.html">Terms</a>
+                <a href="contact.html">Contact</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Auth Modal -->
+    <div id="auth-modal" class="modal-overlay hidden modal-backdrop">
+        <div class="modal-box modal-content">
+            <button id="close-auth-modal" class="btn btn-ghost btn-sm" style="float:right">✕</button>
+            <div class="auth-panel" id="login-panel">
+                <h2>Log in</h2><p class="modal-subtitle">Continue your learning journey.</p>
+                <form id="login-form">
+                    <div class="form-group"><label>Email</label><input type="email" name="email" class="input-field" required></div>
+                    <div class="form-group"><label>Password</label><input type="password" name="password" class="input-field" required></div>
+                    <div id="login-error" class="form-error"></div>
+                    <button type="submit" class="btn btn-primary" style="width:100%; justify-content:center; margin-top:8px;">Log in</button>
+                </form>
+                <p class="modal-switch">No account? <a href="#" id="switch-to-register">Create one</a></p>
+            </div>
+            <div class="auth-panel" id="register-panel" style="display:none;">
+                <h2>Create account</h2>
+                <form id="register-form">
+                    <div class="form-group"><label>Username</label><input type="text" name="username" class="input-field" required></div>
+                    <div class="form-group"><label>Email</label><input type="email" name="email" class="input-field" required></div>
+                    <div class="form-group"><label>Password</label><input type="password" name="password" class="input-field" required></div>
+                    <div id="register-error" class="form-error"></div>
+                    <button type="submit" class="btn btn-primary" style="width:100%; justify-content:center; margin-top:8px;">Create account</button>
+                </form>
+                <p class="modal-switch">Already have an account? <a href="#" id="switch-to-login">Log in</a></p>
+            </div>
+        </div>
+    </div>
+    <div id="toast-container"></div>
+
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/config.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>

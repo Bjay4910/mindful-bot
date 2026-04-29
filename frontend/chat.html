@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" href="favicon.ico">
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+    <link rel="apple-touch-icon" href="apple-touch-icon.png">
+    <link rel="manifest" href="site.webmanifest">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat — mindful-bot</title>
+    <link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css">
+    <link rel="stylesheet" href="css/main.css">
+    <style>
+        body { overflow: hidden; height: 100vh; display: flex; flex-direction: column; }
+
+        /* ── Layout ── */
+        .app-layout {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        /* ── Sidebar ── */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: var(--color-bg-secondary);
+            border-right: 1px solid var(--color-border);
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            padding: 16px 12px;
+            flex-shrink: 0;
+        }
+        .sidebar-section-title {
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--color-text-tertiary);
+            padding: 8px 8px 4px;
+        }
+        .sidebar-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 7px 8px;
+            border-radius: var(--radius-sm);
+            font-size: 0.875rem;
+            color: var(--color-text-secondary);
+            cursor: pointer;
+            transition: background 0.15s, color 0.15s;
+        }
+        .sidebar-item:hover { background: var(--color-bg-tertiary); color: var(--color-text); }
+        .sidebar-item.active { background: var(--color-primary-light); color: var(--color-primary); font-weight: 500; }
+
+        .score-panel {
+            margin-top: auto;
+            border-top: 1px solid var(--color-border);
+            padding-top: 12px;
+        }
+        .score-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 6px 8px;
+            font-size: 0.85rem;
+        }
+        .score-row .label { color: var(--color-text-secondary); }
+        .score-row .value { font-weight: 600; color: var(--color-text); }
+        #user-score { color: var(--color-primary); }
+
+        /* ── Chat area ── */
+        .chat-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            background: var(--color-bg);
+        }
+        .chat-topbar {
+            height: 56px;
+            border-bottom: 1px solid var(--color-border);
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+            gap: 12px;
+            flex-shrink: 0;
+        }
+        .chat-topbar h2 { font-size: 1rem; font-weight: 600; }
+        .chat-topbar .topbar-right {
+            margin-left: auto;
+            display: flex;
+            gap: 8px;
+        }
+
+        #chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 24px 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        /* ── Bubbles ── */
+        .chat-bubble {
+            max-width: 68%;
+            line-height: 1.6;
+            font-size: 0.925rem;
+        }
+        .user-bubble {
+            align-self: flex-end;
+            background: var(--color-primary);
+            color: #fff;
+            padding: 12px 16px;
+            border-radius: 18px 18px 4px 18px;
+        }
+        .bot-bubble {
+            align-self: flex-start;
+            display: flex;
+            gap: 10px;
+            align-items: flex-start;
+        }
+        .bot-avatar {
+            width: 32px;
+            height: 32px;
+            background: var(--color-primary);
+            color: #fff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.8rem;
+            flex-shrink: 0;
+        }
+        .bubble-text {
+            background: var(--color-bg-secondary);
+            padding: 12px 16px;
+            border-radius: 4px 18px 18px 18px;
+            color: var(--color-text);
+        }
+        .typing-dots {
+            background: var(--color-bg-secondary);
+            padding: 14px 16px;
+            border-radius: 4px 18px 18px 18px;
+            display: flex;
+            gap: 4px;
+            align-items: center;
+        }
+
+        /* ── Input area ── */
+        .chat-input-area {
+            border-top: 1px solid var(--color-border);
+            padding: 14px 20px;
+            display: flex;
+            gap: 10px;
+            align-items: flex-end;
+            background: var(--color-bg);
+            flex-shrink: 0;
+        }
+        #chat-input {
+            flex: 1;
+            resize: none;
+            border: 1px solid var(--color-border);
+            border-radius: 12px;
+            padding: 10px 14px;
+            font-size: 0.925rem;
+            color: var(--color-text);
+            background: var(--color-bg);
+            outline: none;
+            min-height: 44px;
+            max-height: 120px;
+            line-height: 1.5;
+            transition: border-color 0.15s;
+        }
+        #chat-input:focus { border-color: var(--color-primary); }
+        #send-btn {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background: var(--color-primary);
+            color: #fff;
+            border: none;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            transition: background 0.15s, transform 0.1s;
+        }
+        #send-btn:hover { background: var(--color-primary-hover); }
+        #send-btn:active { transform: scale(0.95); }
+
+        /* ── Challenge card (inline in chat) ── */
+        .challenge-card-inline {
+            align-self: stretch;
+            background: var(--color-bg);
+            border: 2px solid var(--color-primary);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            margin: 4px 0;
+        }
+        .challenge-loading-inline {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: var(--color-text-secondary);
+            font-size: 0.9rem;
+        }
+        .challenge-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+        .challenge-question {
+            font-size: 1.1rem;
+            margin-bottom: 12px;
+            line-height: 1.5;
+        }
+        .challenge-hint {
+            font-size: 0.875rem;
+            color: var(--color-text-secondary);
+            margin-bottom: 16px;
+            padding: 10px 14px;
+            background: var(--color-bg-secondary);
+            border-radius: var(--radius-sm);
+        }
+        #challenge-answer {
+            min-height: 80px;
+            margin-bottom: 8px;
+        }
+        .challenge-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 16px;
+        }
+        .score-display {
+            display: flex;
+            align-items: baseline;
+            gap: 8px;
+            padding: 16px;
+            border-radius: var(--radius-md);
+            margin-bottom: 16px;
+        }
+        .score-number { font-size: 3rem; font-weight: 700; }
+        .score-label { font-size: 1.1rem; font-weight: 500; }
+        .challenge-feedback {
+            margin-bottom: 16px;
+            color: var(--color-text);
+            font-size: 0.925rem;
+        }
+        .correct-answer {
+            background: var(--color-bg-secondary);
+            padding: 12px 14px;
+            border-radius: var(--radius-sm);
+            margin-bottom: 4px;
+        }
+        .correct-answer strong { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em; }
+        .correct-answer p { font-size: 0.9rem; margin-top: 4px; color: var(--color-text); }
+
+        @media (max-width: 640px) {
+            .sidebar { display: none; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="topnav">
+        <a href="index.html" class="topnav-logo">
+            <div class="logo-icon">M</div>
+            mindful-bot
+        </a>
+        <div class="topnav-links">
+            <a href="dashboard.html">Dashboard</a>
+            <a href="leaderboard.html">Leaderboard</a>
+        </div>
+        <div class="topnav-actions">
+            <div id="nav-auth-links" style="display:flex; gap:8px;">
+                <button class="btn btn-ghost" data-open-login>Log in</button>
+            </div>
+            <div id="nav-user-links" style="display:none; gap:8px; align-items:center;">
+                <span id="nav-username" style="font-size:0.875rem; color:var(--color-text-secondary);"></span>
+                <a href="#" id="logout-btn" class="btn btn-ghost btn-sm">Log out</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="app-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-section-title">Navigation</div>
+            <a href="chat.html" class="sidebar-item active">💬 Chat</a>
+            <a href="dashboard.html" class="sidebar-item">📊 Dashboard</a>
+            <a href="leaderboard.html" class="sidebar-item">🏆 Leaderboard</a>
+            <a href="features.html" class="sidebar-item">✨ Features</a>
+
+            <div class="score-panel">
+                <div class="sidebar-section-title">Your Progress</div>
+                <div class="score-row">
+                    <span class="label">Points</span>
+                    <span class="value" id="user-score">—</span>
+                </div>
+                <div class="score-row">
+                    <span class="label">Streak</span>
+                    <span class="value"><span id="user-streak">0</span> 🔥</span>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Chat area -->
+        <main class="chat-area">
+            <div class="chat-topbar">
+                <h2>Chat with Mindful</h2>
+                <div class="topbar-right">
+                    <button class="btn btn-ghost btn-sm" onclick="location.reload()">New session</button>
+                </div>
+            </div>
+
+            <div id="chat-messages"></div>
+
+            <div class="chat-input-area">
+                <textarea
+                    id="chat-input"
+                    placeholder="Ask me anything — I'll challenge you to think first..."
+                    rows="1"
+                ></textarea>
+                <button id="send-btn" aria-label="Send">
+                    ↑
+                </button>
+            </div>
+        </main>
+    </div>
+
+    <!-- Challenge overlay -->
+    <!-- Auth Modal -->
+    <div id="auth-modal" class="modal-overlay hidden modal-backdrop">
+        <div class="modal-box modal-content">
+            <button id="close-auth-modal" class="btn btn-ghost btn-sm" style="float:right">✕</button>
+            <div class="auth-panel" id="login-panel">
+                <h2>Log in to chat</h2>
+                <p class="modal-subtitle">You need an account to use mindful-bot.</p>
+                <form id="login-form">
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" name="email" class="input-field" placeholder="you@example.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Password</label>
+                        <input type="password" name="password" class="input-field" placeholder="••••••••" required>
+                    </div>
+                    <div id="login-error" class="form-error"></div>
+                    <button type="submit" class="btn btn-primary" style="width:100%; justify-content:center; margin-top:8px;">Log in</button>
+                </form>
+                <p class="modal-switch">No account? <a href="#" id="switch-to-register">Create one</a></p>
+            </div>
+            <div class="auth-panel" id="register-panel" style="display:none;">
+                <h2>Create account</h2>
+                <p class="modal-subtitle">Join and start earning recall points.</p>
+                <form id="register-form">
+                    <div class="form-group">
+                        <label>Username</label>
+                        <input type="text" name="username" class="input-field" placeholder="learner42" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" name="email" class="input-field" placeholder="you@example.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Password</label>
+                        <input type="password" name="password" class="input-field" placeholder="At least 6 characters" required>
+                    </div>
+                    <div id="register-error" class="form-error"></div>
+                    <button type="submit" class="btn btn-primary" style="width:100%; justify-content:center; margin-top:8px;">Create account</button>
+                </form>
+                <p class="modal-switch">Already have an account? <a href="#" id="switch-to-login">Log in</a></p>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast-container"></div>
+
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/config.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/chat.js"></script>
+</body>
+</html>

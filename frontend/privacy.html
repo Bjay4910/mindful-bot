@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" href="favicon.ico">
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+    <link rel="apple-touch-icon" href="apple-touch-icon.png">
+    <link rel="manifest" href="site.webmanifest">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Privacy Policy — mindful-bot</title>
+    <link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css">
+    <link rel="stylesheet" href="css/main.css">
+    <style>
+        .doc-page { max-width: 680px; margin: 0 auto; padding: 56px 24px; }
+        .doc-page h1 { margin-bottom: 8px; }
+        .doc-page .meta { color: var(--color-text-tertiary); font-size: 0.85rem; margin-bottom: 40px; }
+        .doc-page h2 { font-size: 1.1rem; margin: 32px 0 8px; }
+        .doc-page p  { margin-bottom: 16px; }
+    </style>
+</head>
+<body>
+    <nav class="topnav">
+        <a href="index.html" class="topnav-logo"><div class="logo-icon">M</div>mindful-bot</a>
+        <div class="topnav-actions">
+            <div id="nav-auth-links" style="display:flex; gap:8px;">
+                <button class="btn btn-ghost" data-open-login>Log in</button>
+                <button class="btn btn-primary" data-open-register>Get started</button>
+            </div>
+            <div id="nav-user-links" style="display:none; gap:8px;">
+                <a href="#" id="logout-btn" class="btn btn-ghost btn-sm">Log out</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="doc-page page-enter">
+        <h1>Privacy Policy</h1>
+        <p class="meta">Last updated: April 2026</p>
+
+        <h2>What we collect</h2>
+        <p>We collect your email address and username when you create an account. We also store the messages you send to the chatbot and your recall challenge answers in order to provide the service.</p>
+
+        <h2>How we use your data</h2>
+        <p>Your conversation data is used solely to power the AI chatbot and generate recall challenges. We do not sell your data to third parties. Anonymised, aggregated data may be used to improve the service.</p>
+
+        <h2>Third-party services</h2>
+        <p>We use <strong>Supabase</strong> for authentication and database storage, and the <strong>Anthropic Claude API</strong> to generate AI responses. Your messages are sent to Anthropic's API for processing. Please review Anthropic's privacy policy for details on how they handle data.</p>
+
+        <h2>Data retention</h2>
+        <p>Your account data is retained while your account is active. You may request deletion at any time by contacting us at gyampoh.b.james@gmail.com.</p>
+
+        <h2>Security</h2>
+        <p>All data is stored in Supabase with Row Level Security enabled. API communications use HTTPS. We never store plaintext passwords — authentication is handled by Supabase Auth.</p>
+
+        <h2>Contact</h2>
+        <p>Questions about privacy? Email <a href="mailto:gyampoh.b.james@gmail.com" style="color:var(--color-primary);">gyampoh.b.james@gmail.com</a>.</p>
+    </div>
+
+    <footer class="footer">
+        <div class="footer-inner">
+            <span>© 2026 mindful-bot</span>
+            <div class="footer-links">
+                <a href="terms.html">Terms</a>
+                <a href="contact.html">Contact</a>
+            </div>
+        </div>
+    </footer>
+
+    <div id="auth-modal" class="modal-overlay hidden modal-backdrop">
+        <div class="modal-box modal-content">
+            <button id="close-auth-modal" class="btn btn-ghost btn-sm" style="float:right">✕</button>
+            <div class="auth-panel" id="login-panel">
+                <h2>Log in</h2><p class="modal-subtitle">Continue your learning journey.</p>
+                <form id="login-form">
+                    <div class="form-group"><label>Email</label><input type="email" name="email" class="input-field" required></div>
+                    <div class="form-group"><label>Password</label><input type="password" name="password" class="input-field" required></div>
+                    <div id="login-error" class="form-error"></div>
+                    <button type="submit" class="btn btn-primary" style="width:100%; justify-content:center; margin-top:8px;">Log in</button>
+                </form>
+                <p class="modal-switch">No account? <a href="#" id="switch-to-register">Create one</a></p>
+            </div>
+            <div class="auth-panel" id="register-panel" style="display:none;">
+                <h2>Create account</h2>
+                <form id="register-form">
+                    <div class="form-group"><label>Username</label><input type="text" name="username" class="input-field" required></div>
+                    <div class="form-group"><label>Email</label><input type="email" name="email" class="input-field" required></div>
+                    <div class="form-group"><label>Password</label><input type="password" name="password" class="input-field" required></div>
+                    <div id="register-error" class="form-error"></div>
+                    <button type="submit" class="btn btn-primary" style="width:100%; justify-content:center; margin-top:8px;">Create account</button>
+                </form>
+                <p class="modal-switch">Already have an account? <a href="#" id="switch-to-login">Log in</a></p>
+            </div>
+        </div>
+    </div>
+    <div id="toast-container"></div>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/config.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>
