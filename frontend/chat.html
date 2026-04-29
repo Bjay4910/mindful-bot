@@ -264,6 +264,271 @@
         @media (max-width: 640px) {
             .sidebar { display: none; }
         }
+
+        /* Bubble canvas */
+        #chat-bubble-canvas {
+            position: fixed;
+            inset: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 0;
+            pointer-events: none;
+            display: block;
+        }
+
+        /* Ensure all content above canvas */
+        .topnav    { position: relative; z-index: 100; }
+        .app-layout { position: relative; z-index: 1; }
+
+        /* Sidebar glassmorphism */
+        .sidebar {
+            background: rgba(255,255,255,0.55) !important;
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-right: 1px solid rgba(255,255,255,0.4) !important;
+        }
+        body.theme-dark .sidebar {
+            background: rgba(15,30,80,0.55) !important;
+            border-right: 1px solid rgba(255,255,255,0.08) !important;
+        }
+        body.theme-space .sidebar {
+            background: rgba(10,5,40,0.55) !important;
+            border-right: 1px solid rgba(139,92,246,0.2) !important;
+        }
+
+        /* Chat area transparent */
+        .chat-area {
+            background: transparent !important;
+        }
+        .chat-topbar {
+            background: rgba(255,255,255,0.6);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+        body.theme-dark .chat-topbar {
+            background: rgba(15,23,42,0.7);
+        }
+        body.theme-space .chat-topbar {
+            background: rgba(5,11,31,0.7);
+        }
+        .chat-input-area {
+            background: rgba(255,255,255,0.6) !important;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+        body.theme-dark .chat-input-area {
+            background: rgba(15,23,42,0.75) !important;
+        }
+        body.theme-space .chat-input-area {
+            background: rgba(5,11,31,0.75) !important;
+        }
+
+        /* User bubble slide in from right */
+        @keyframes bubbleFromRight {
+            from { opacity: 0; transform: translateX(24px) scale(0.95); }
+            to   { opacity: 1; transform: translateX(0) scale(1); }
+        }
+
+        /* Bot bubble slide in from left */
+        @keyframes bubbleFromLeft {
+            from { opacity: 0; transform: translateX(-24px) scale(0.95); }
+            to   { opacity: 1; transform: translateX(0) scale(1); }
+        }
+
+        /* Challenge card entrance */
+        @keyframes challengeEntrance {
+            from { opacity: 0; transform: translateY(20px) scale(0.97); }
+            to   { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        /* Challenge border pulse glow */
+        @keyframes challengePulse {
+            0%, 100% {
+                box-shadow: 0 0 0 0 rgba(59,130,246,0.4),
+                            0 4px 24px rgba(59,130,246,0.1);
+            }
+            50% {
+                box-shadow: 0 0 0 6px rgba(59,130,246,0.0),
+                            0 4px 32px rgba(59,130,246,0.25);
+            }
+        }
+
+        /* Typing dots bounce */
+        @keyframes dotBounce {
+            0%, 80%, 100% { transform: translateY(0); opacity: 0.4; }
+            40%           { transform: translateY(-6px); opacity: 1; }
+        }
+
+        .typing-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: var(--color-primary);
+            animation: dotBounce 1.2s ease-in-out infinite;
+        }
+        .typing-dot:nth-child(2) { animation-delay: 0.18s; }
+        .typing-dot:nth-child(3) { animation-delay: 0.36s; }
+
+        /* Apply animations to bubbles */
+        .user-bubble {
+            animation: bubbleFromRight 0.35s cubic-bezier(0.22,1,0.36,1) both;
+        }
+        .bot-bubble {
+            animation: bubbleFromLeft 0.35s cubic-bezier(0.22,1,0.36,1) both;
+        }
+        .challenge-card-inline {
+            animation: challengeEntrance 0.5s cubic-bezier(0.22,1,0.36,1) both,
+                       challengePulse 2.5s ease-in-out 0.5s 3;
+            background: rgba(255,255,255,0.75) !important;
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+        }
+        body.theme-dark .challenge-card-inline {
+            background: rgba(15,30,80,0.75) !important;
+        }
+        body.theme-space .challenge-card-inline {
+            background: rgba(10,5,40,0.75) !important;
+            border-color: rgba(139,92,246,0.8) !important;
+        }
+
+        /* ── Dark mode text fixes ── */
+        body.theme-dark .sidebar-section-title,
+        body.theme-dark .sidebar-item,
+        body.theme-dark .score-panel .label,
+        body.theme-dark .score-panel .value {
+            color: rgba(226,232,240,0.85) !important;
+        }
+        body.theme-dark .sidebar-item.active {
+            color: #60a5fa !important;
+            background: rgba(96,165,250,0.15) !important;
+        }
+        body.theme-dark .sidebar-item:hover {
+            background: rgba(255,255,255,0.08) !important;
+            color: #fff !important;
+        }
+
+        /* Dashboard dark text */
+        body.theme-dark .dashboard-title,
+        body.theme-dark .dashboard-subtitle,
+        body.theme-dark .stat-card .stat-label,
+        body.theme-dark .stat-card .stat-value,
+        body.theme-dark .profile-meta h3,
+        body.theme-dark .profile-meta p,
+        body.theme-dark .session-topic,
+        body.theme-dark .session-date,
+        body.theme-dark .section-block h3 {
+            color: #e2e8f0 !important;
+        }
+        body.theme-dark .stat-card.highlight .stat-value {
+            color: #60a5fa !important;
+        }
+
+        /* Leaderboard dark text */
+        body.theme-dark .lb-header h1,
+        body.theme-dark .lb-header p,
+        body.theme-dark .lb-legend,
+        body.theme-dark .lb-table td,
+        body.theme-dark .lb-table th,
+        body.theme-dark .lb-username,
+        body.theme-dark .lb-points,
+        body.theme-dark .lb-rank {
+            color: #e2e8f0 !important;
+        }
+        body.theme-dark .lb-points { color: #60a5fa !important; }
+
+        /* Chat dark text */
+        body.theme-dark .chat-topbar h2,
+        body.theme-dark .bubble-text,
+        body.theme-dark #chat-input {
+            color: #e2e8f0 !important;
+        }
+        body.theme-dark #chat-input {
+            background: rgba(15,23,42,0.6) !important;
+            border-color: rgba(255,255,255,0.12) !important;
+        }
+
+        /* Deep space same fixes */
+        body.theme-space .sidebar-section-title,
+        body.theme-space .sidebar-item,
+        body.theme-space .score-panel .label,
+        body.theme-space .score-panel .value {
+            color: rgba(196,181,253,0.85) !important;
+        }
+        body.theme-space .sidebar-item.active {
+            color: #a78bfa !important;
+            background: rgba(139,92,246,0.15) !important;
+        }
+        body.theme-space .dashboard-title,
+        body.theme-space .dashboard-subtitle,
+        body.theme-space .stat-card .stat-label,
+        body.theme-space .stat-card .stat-value,
+        body.theme-space .profile-meta h3,
+        body.theme-space .profile-meta p,
+        body.theme-space .session-topic,
+        body.theme-space .session-date,
+        body.theme-space .section-block h3,
+        body.theme-space .lb-header h1,
+        body.theme-space .lb-header p,
+        body.theme-space .lb-legend,
+        body.theme-space .lb-table td,
+        body.theme-space .lb-table th,
+        body.theme-space .chat-topbar h2,
+        body.theme-space .bubble-text {
+            color: #e2e8f0 !important;
+        }
+        body.theme-space .lb-points,
+        body.theme-space .stat-card.highlight .stat-value {
+            color: #a78bfa !important;
+        }
+
+        /* ── Dark mode: force proper dark background on body ── */
+        body.theme-dark {
+            background: #0F172A !important;
+        }
+        body.theme-dark .dashboard-title,
+        body.theme-dark .dashboard-subtitle,
+        body.theme-dark .section-block h3,
+        body.theme-dark .lb-header h1,
+        body.theme-dark .lb-header p,
+        body.theme-dark .lb-legend,
+        body.theme-dark .chat-topbar h2 {
+            color: #f1f5f9 !important;
+        }
+
+        /* Bot bubble text in dark */
+        body.theme-dark .bubble-text {
+            background: rgba(30,41,59,0.90) !important;
+            color: #e2e8f0 !important;
+        }
+
+        /* Session items text */
+        body.theme-dark .session-topic { color: #f1f5f9 !important; }
+        body.theme-dark .session-date  { color: #94a3b8 !important; }
+        body.theme-dark .session-item .btn { color: #94a3b8 !important; }
+
+        /* Profile card text */
+        body.theme-dark .profile-meta h3 { color: #f1f5f9 !important; }
+        body.theme-dark .profile-meta p  { color: #94a3b8 !important; }
+
+        /* Stat card labels */
+        body.theme-dark .stat-card .stat-label { color: #94a3b8 !important; }
+        body.theme-dark .stat-card .stat-value { color: #f1f5f9 !important; }
+        body.theme-dark .stat-card.highlight .stat-value { color: #60a5fa !important; }
+
+        /* Deep space */
+        body.theme-space {
+            background: #050B1F !important;
+        }
+        body.theme-space .dashboard-title,
+        body.theme-space .lb-header h1,
+        body.theme-space .chat-topbar h2 { color: #f1f5f9 !important; }
+        body.theme-space .dashboard-subtitle,
+        body.theme-space .lb-header p,
+        body.theme-space .lb-legend      { color: #a78bfa !important; }
+        body.theme-space .bubble-text {
+            background: rgba(10,5,40,0.90) !important;
+            color: #e2e8f0 !important;
+        }
     </style>
 </head>
 <body>
@@ -387,5 +652,196 @@
     <script src="js/config.js"></script>
     <script src="js/main.js"></script>
     <script src="js/chat.js"></script>
+    <script>
+    (function() {
+        /* Theme: apply saved theme on load */
+        var t = localStorage.getItem('mb-theme');
+        if (t && t !== 'light') document.body.classList.add('theme-' + t);
+
+        /* Water bubble canvas — same as index.html */
+        function initBubbleCanvas() {
+            var canvas = document.createElement('canvas');
+            canvas.id = 'chat-bubble-canvas';
+            canvas.setAttribute('aria-hidden', 'true');
+            document.body.insertBefore(canvas, document.body.firstChild);
+            var ctx = canvas.getContext('2d');
+            function resize() {
+                canvas.width  = window.innerWidth;
+                canvas.height = window.innerHeight;
+            }
+            resize();
+            window.addEventListener('resize', resize, { passive: true });
+
+            function createBubble() {
+                var size = 8 + Math.random() * 48;
+                return {
+                    x: Math.random() * canvas.width,
+                    y: canvas.height + size,
+                    r: size,
+                    speed: 0.3 + Math.random() * 0.7,
+                    wobble: 0,
+                    wobbleSpeed: 0.018 + Math.random() * 0.022,
+                    wobbleAmp: 1.2 + Math.random() * 2.2,
+                    opacity: 0.12 + Math.random() * 0.18,
+                    pop: false,
+                    popFrame: 0,
+                };
+            }
+
+            var bubbles = Array.from({ length: 25 }, function() {
+                var b = createBubble();
+                b.y = Math.random() * canvas.height;
+                return b;
+            });
+
+            var frame = 0;
+
+            function drawDepthBackground() {
+                var cx = canvas.width / 2;
+                var cy = canvas.height / 2;
+                var isDark  = document.body.classList.contains('theme-dark');
+                var isSpace = document.body.classList.contains('theme-space');
+                var radial  = ctx.createRadialGradient(
+                    cx, cy, 0, cx, cy,
+                    Math.max(canvas.width, canvas.height) * 0.75
+                );
+                if (isSpace) {
+                    radial.addColorStop(0,   'rgba(30,20,80,0.18)');
+                    radial.addColorStop(0.5, 'rgba(15,10,50,0.22)');
+                    radial.addColorStop(1,   'rgba(5,5,30,0.35)');
+                } else if (isDark) {
+                    radial.addColorStop(0,   'rgba(30,58,120,0.12)');
+                    radial.addColorStop(0.5, 'rgba(15,30,80,0.16)');
+                    radial.addColorStop(1,   'rgba(5,10,40,0.28)');
+                } else {
+                    radial.addColorStop(0,   'rgba(200,220,255,0.18)');
+                    radial.addColorStop(0.5, 'rgba(180,200,255,0.22)');
+                    radial.addColorStop(1,   'rgba(140,170,255,0.30)');
+                }
+                ctx.fillStyle = radial;
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                var gridColor = isSpace
+                    ? 'rgba(139,92,246,0.08)'
+                    : isDark ? 'rgba(96,165,250,0.07)'
+                    : 'rgba(99,130,246,0.09)';
+                ctx.strokeStyle = gridColor;
+                ctx.lineWidth = 0.8;
+                var numLines = 16;
+                for (var i = 0; i < numLines; i++) {
+                    var angle = (i / numLines) * Math.PI * 2;
+                    ctx.beginPath();
+                    ctx.moveTo(cx, cy);
+                    ctx.lineTo(
+                        cx + Math.cos(angle) * canvas.width,
+                        cy + Math.sin(angle) * canvas.height
+                    );
+                    ctx.stroke();
+                }
+                var numRings  = 8;
+                var maxRadius = Math.max(canvas.width, canvas.height) * 0.72;
+                var pulseSpeed = 0.0018;
+                for (var r = 0; r < numRings; r++) {
+                    var progress = ((frame * pulseSpeed) + (r / numRings)) % 1;
+                    var radius   = progress * maxRadius;
+                    var alpha    = Math.sin(progress * Math.PI) * 0.07;
+                    ctx.beginPath();
+                    ctx.arc(cx, cy, radius, 0, Math.PI * 2);
+                    ctx.strokeStyle = isSpace
+                        ? 'rgba(139,92,246,' + alpha + ')'
+                        : isDark
+                        ? 'rgba(96,165,250,' + alpha + ')'
+                        : 'rgba(99,130,246,' + alpha + ')';
+                    ctx.lineWidth = 1;
+                    ctx.stroke();
+                }
+            }
+
+            function drawBubble(b) {
+                var isDark  = document.body.classList.contains('theme-dark');
+                var isSpace = document.body.classList.contains('theme-space');
+                ctx.save();
+                ctx.globalAlpha = b.opacity;
+                var x = b.x + Math.sin(b.wobble) * b.wobbleAmp;
+                var y = b.y;
+                var r = b.r;
+                ctx.beginPath();
+                ctx.arc(x, y, r, 0, Math.PI * 2);
+                ctx.fillStyle = isSpace
+                    ? 'rgba(139,92,246,0.12)'
+                    : isDark ? 'rgba(96,165,250,0.13)'
+                    : 'rgba(99,130,246,0.10)';
+                ctx.fill();
+                ctx.strokeStyle = isSpace
+                    ? 'rgba(167,139,250,0.80)'
+                    : isDark ? 'rgba(147,197,253,0.75)'
+                    : 'rgba(79,110,246,0.60)';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+                var hlX = x - r * 0.32, hlY = y - r * 0.32, hlR = r * 0.22;
+                var hl  = ctx.createRadialGradient(hlX, hlY, 0, hlX, hlY, hlR);
+                hl.addColorStop(0, 'rgba(255,255,255,0.85)');
+                hl.addColorStop(1, 'rgba(255,255,255,0)');
+                ctx.beginPath();
+                ctx.arc(hlX, hlY, hlR, 0, Math.PI * 2);
+                ctx.fillStyle = hl;
+                ctx.fill();
+                var sh = ctx.createRadialGradient(
+                    x + r*0.28, y + r*0.28, 0,
+                    x + r*0.28, y + r*0.28, r*0.18
+                );
+                sh.addColorStop(0, 'rgba(255,255,255,0.25)');
+                sh.addColorStop(1, 'rgba(255,255,255,0)');
+                ctx.beginPath();
+                ctx.arc(x + r*0.28, y + r*0.28, r*0.18, 0, Math.PI*2);
+                ctx.fillStyle = sh;
+                ctx.fill();
+                ctx.restore();
+            }
+
+            function drawPop(b) {
+                ctx.save();
+                ctx.globalAlpha = b.opacity * (1 - b.popFrame / 12);
+                ctx.beginPath();
+                ctx.arc(b.x, b.y, b.r + b.popFrame * 3, 0, Math.PI * 2);
+                ctx.strokeStyle = 'rgba(79,110,246,0.65)';
+                ctx.lineWidth = 1;
+                ctx.stroke();
+                ctx.restore();
+            }
+
+            function animate() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                drawDepthBackground();
+                bubbles.forEach(function(b, i) {
+                    if (b.pop) {
+                        drawPop(b);
+                        b.popFrame++;
+                        if (b.popFrame > 12) bubbles[i] = createBubble();
+                        return;
+                    }
+                    drawBubble(b);
+                    b.y      -= b.speed;
+                    b.wobble += b.wobbleSpeed;
+                    if (b.y < -b.r) {
+                        bubbles[i] = createBubble();
+                    } else if (b.y < canvas.height * 0.15 && Math.random() < 0.004) {
+                        b.pop = true;
+                    }
+                });
+                if (bubbles.length < 35 && Math.random() < 0.04) {
+                    bubbles.push(createBubble());
+                }
+                frame++;
+                requestAnimationFrame(animate);
+            }
+            animate();
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            initBubbleCanvas();
+        });
+    })();
+    </script>
 </body>
 </html>

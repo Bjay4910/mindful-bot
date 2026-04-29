@@ -12,10 +12,151 @@
     <link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css">
     <link rel="stylesheet" href="css/main.css">
     <style>
-        /* Page-specific styles */
-        .hero-bg {
-            background: linear-gradient(160deg, #f0f7ff 0%, #ffffff 60%);
+        /* ── Theme transitions ── */
+        body {
+            transition: background 0.4s ease, color 0.4s ease;
         }
+
+        /* ── DARK theme ── */
+        body.theme-dark {
+            --color-bg: #0F172A;
+            --color-bg-secondary: #1e293b;
+            --color-bg-tertiary: #273549;
+            --color-text: #e2e8f0;
+            --color-text-secondary: #94a3b8;
+            --color-text-tertiary: #64748b;
+            --color-border: rgba(255,255,255,0.09);
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.5);
+            --shadow-md: 0 4px 12px rgba(0,0,0,0.55);
+            --shadow-lg: 0 8px 28px rgba(0,0,0,0.65);
+            background: #0F172A;
+            color: #e2e8f0;
+        }
+        body.theme-dark .topnav {
+            background: rgba(15,23,42,0.85) !important;
+            border-bottom-color: rgba(255,255,255,0.08);
+        }
+        body.theme-dark .how-it-works { background: rgba(255,255,255,0.08); }
+        body.theme-dark .cta-section {
+            background: rgba(29,78,216,0.88);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+        body.theme-dark .footer { border-top-color: rgba(255,255,255,0.08); }
+
+        /* ── DEEP SPACE theme ── */
+        body.theme-space {
+            --color-bg: #050B1F;
+            --color-bg-secondary: #0a1628;
+            --color-bg-tertiary: #0f1f3a;
+            --color-text: #e2e8f0;
+            --color-text-secondary: #a78bfa;
+            --color-text-tertiary: #7c3aed;
+            --color-border: rgba(139,92,246,0.28);
+            --color-primary: #818cf8;
+            --color-primary-hover: #6366f1;
+            --color-primary-light: rgba(129,140,248,0.12);
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.7);
+            --shadow-md: 0 4px 16px rgba(0,0,0,0.7);
+            --shadow-lg: 0 8px 32px rgba(0,0,0,0.8);
+            background: #050B1F;
+            color: #e2e8f0;
+        }
+        body.theme-space .topnav {
+            background: rgba(5,11,31,0.88) !important;
+            border-bottom-color: rgba(139,92,246,0.25);
+        }
+        body.theme-space .how-it-works { background: rgba(255,255,255,0.08); }
+        body.theme-space .cta-section {
+            background: linear-gradient(135deg,
+                rgba(79,70,229,0.88),
+                rgba(109,40,217,0.88));
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+        body.theme-space .footer { border-top-color: rgba(139,92,246,0.2); }
+
+        /* ── Hero ── */
+        .hero-bg {
+            position: relative;
+            overflow: hidden;
+            background: transparent;
+        }
+        body.theme-dark .hero-bg {
+            background: transparent;
+        }
+        body.theme-space .hero-bg {
+            background: transparent;
+        }
+
+        /* Canvas covers entire page */
+        #bubble-canvas {
+            position: fixed;
+            inset: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 0;
+            pointer-events: none;
+            display: block;
+        }
+        /* All page sections sit above the canvas */
+        .topnav       { position: relative; z-index: 100; }
+        .hero         { position: relative; z-index: 1; background: transparent; }
+        body.theme-dark  .hero { background: transparent; }
+        body.theme-space .hero { background: transparent; }
+        .section      { position: relative; z-index: 1; background: transparent; }
+        .how-it-works { position: relative; z-index: 1; }
+        .cta-section  { position: relative; z-index: 1; }
+        .footer       { position: relative; z-index: 1; }
+
+        /* ── Brain hero animations ── */
+        .hero-brain-wrap {
+            display: inline-block;
+            margin-bottom: 20px;
+            animation:
+                heroBrainDrop 0.85s cubic-bezier(0.34,1.56,0.64,1) 0.15s both,
+                heroBrainFloat 3.8s ease-in-out 1s infinite;
+        }
+        .hero-brain {
+            font-size: 4.5rem;
+            display: inline-block;
+            user-select: none;
+            animation: heroBrainGlow 3.8s ease-in-out 1s infinite;
+        }
+
+        @keyframes heroBrainDrop {
+            from { transform: translateY(-80px) rotate(-15deg) scale(0.5); opacity: 0; }
+            to   { transform: translateY(0) rotate(0deg) scale(1); opacity: 1; }
+        }
+        @keyframes heroBrainFloat {
+            0%, 100% { transform: translateY(0) rotate(-4deg); }
+            50%       { transform: translateY(-18px) rotate(4deg); }
+        }
+        @keyframes heroBrainGlow {
+            0%, 100% { filter: drop-shadow(0 8px 20px rgba(59,130,246,0.18)); }
+            50%       { filter: drop-shadow(0 16px 44px rgba(59,130,246,0.55)); }
+        }
+
+        /* ── Hero text stagger animations ── */
+        @keyframes heroSlideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        .hero-eyebrow {
+            font-size: 0.72rem;
+            font-weight: 700;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: var(--color-primary);
+            opacity: 0.85;
+            animation: heroSlideUp 0.7s cubic-bezier(0.22,1,0.36,1) 0.35s both;
+        }
+        .hero h1       { animation: heroSlideUp 0.75s cubic-bezier(0.22,1,0.36,1) 0.55s both; }
+        .hero > p      { animation: heroSlideUp 0.75s cubic-bezier(0.22,1,0.36,1) 0.75s both; }
+        .hero-actions  { animation: heroSlideUp 0.7s cubic-bezier(0.22,1,0.36,1) 0.9s both; }
+        .stat-row      { animation: heroSlideUp 0.7s cubic-bezier(0.22,1,0.36,1) 1.05s both; }
+
+        /* ── Stat row ── */
         .stat-row {
             display: flex;
             justify-content: center;
@@ -24,12 +165,21 @@
             margin-top: 48px;
         }
         .stat-item { text-align: center; }
-        .stat-number { font-size: 2rem; font-weight: 700; color: var(--color-primary); }
-        .stat-label  { font-size: 0.85rem; color: var(--color-text-secondary); margin-top: 4px; }
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--color-primary);
+            font-variant-numeric: tabular-nums;
+        }
+        .stat-label { font-size: 0.85rem; color: var(--color-text-secondary); margin-top: 4px; }
 
+        /* ── Section styles preserved ── */
         .how-it-works {
-            background: var(--color-bg-secondary);
+            background: rgba(255,255,255,0.08);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
             padding: 64px 24px;
+            transition: background 0.4s ease;
         }
         .steps-grid {
             display: grid;
@@ -38,24 +188,13 @@
             max-width: 800px;
             margin: 0 auto;
         }
-        .step-card {
-            background: var(--color-bg);
-            border: 1px solid var(--color-border);
-            border-radius: var(--radius-lg);
-            padding: 24px;
-            position: relative;
-        }
         .step-number {
-            width: 32px;
-            height: 32px;
+            width: 32px; height: 32px;
             background: var(--color-primary);
             color: #fff;
             border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 700;
-            font-size: 0.85rem;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 700; font-size: 0.85rem;
             margin-bottom: 14px;
         }
         .step-card h4 { margin-bottom: 8px; }
@@ -64,20 +203,293 @@
         .cta-section {
             text-align: center;
             padding: 80px 24px;
-            background: var(--color-primary);
+            background: rgba(37,99,235,0.92);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-top: 1px solid rgba(255,255,255,0.25);
+            border-bottom: 1px solid rgba(255,255,255,0.15);
             color: #fff;
+            transition: background 0.4s ease;
         }
         .cta-section h2 { color: #fff; margin-bottom: 12px; }
-        .cta-section p  { color: rgba(255,255,255,0.8); margin-bottom: 28px; font-size: 1.05rem; }
-        .btn-white {
-            background: #fff;
-            color: var(--color-primary);
-            font-weight: 600;
+        .cta-section p  { color: rgba(255,255,255,0.82); margin-bottom: 28px; font-size: 1.05rem; }
+        .btn-white { background: #fff; color: var(--color-primary); font-weight: 600; }
+        .btn-white:hover { background: rgba(255,255,255,0.92); }
+
+        /* ── Glassmorphism cards ── */
+        .feature-card, .step-card {
+            background: rgba(255,255,255,0.25);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255,255,255,0.45);
+            border-radius: 16px;
+            padding: 28px;
+            box-shadow: 0 8px 32px rgba(99,130,246,0.10),
+                        inset 0 1px 0 rgba(255,255,255,0.6);
+            position: relative;
+            overflow: hidden;
+            will-change: transform;
+            cursor: default;
+            transition: box-shadow 0.25s ease, transform 0.25s ease;
         }
-        .btn-white:hover { background: rgba(255,255,255,0.9); }
+        body.theme-dark .feature-card,
+        body.theme-dark .step-card {
+            background: rgba(15,30,80,0.35);
+            border: 1px solid rgba(96,165,250,0.2);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3),
+                        inset 0 1px 0 rgba(255,255,255,0.08);
+        }
+        body.theme-space .feature-card,
+        body.theme-space .step-card {
+            background: rgba(10,5,40,0.35);
+            border: 1px solid rgba(139,92,246,0.35);
+            box-shadow: 0 8px 32px rgba(139,92,246,0.15),
+                        inset 0 1px 0 rgba(167,139,250,0.15);
+        }
+
+        /* ── Feature icon — enlarged with blue circle ── */
+        .feature-icon {
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, rgba(59,130,246,0.15) 0%, rgba(139,92,246,0.1) 100%);
+            border: 1px solid rgba(59,130,246,0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.6rem;
+            margin-bottom: 18px;
+            flex-shrink: 0;
+        }
+        body.theme-space .feature-icon {
+            background: linear-gradient(135deg, rgba(129,140,248,0.18) 0%, rgba(139,92,246,0.15) 100%);
+            border-color: rgba(129,140,248,0.3);
+        }
+
+        /* Shine overlay */
+        .card-shine {
+            position: absolute;
+            inset: 0;
+            border-radius: inherit;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.2s;
+            z-index: 10;
+            background: radial-gradient(circle at 50% 50%, rgba(255,255,255,0.22) 0%, transparent 65%);
+        }
+
+        /* ── Scroll reveal ── */
+        .scroll-hidden {
+            opacity: 0;
+            transform: translateY(36px);
+            transition: opacity 0.65s cubic-bezier(0.22,1,0.36,1),
+                        transform 0.65s cubic-bezier(0.22,1,0.36,1);
+        }
+        .scroll-visible {
+            opacity: 1 !important;
+            transform: translateY(0) !important;
+        }
+
+        /* ── Theme toggle button ── */
+        .theme-btn {
+            background: none;
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-sm);
+            padding: 5px 9px;
+            font-size: 1.05rem;
+            cursor: pointer;
+            line-height: 1;
+            transition: background 0.15s, border-color 0.15s, transform 0.25s cubic-bezier(0.34,1.56,0.64,1);
+            flex-shrink: 0;
+        }
+        .theme-btn:hover {
+            background: var(--color-bg-secondary);
+            transform: rotate(20deg) scale(1.15);
+        }
+
+        /* ── Profile dropdown ── */
+        .nav-profile-wrap {
+            position: relative;
+        }
+        .nav-profile-btn {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            background: none;
+            border: 1px solid var(--color-border);
+            border-radius: 24px;
+            padding: 4px 10px 4px 4px;
+            cursor: pointer;
+            transition: background 0.15s, box-shadow 0.2s;
+            font-size: 0.875rem;
+            color: var(--color-text-secondary);
+            white-space: nowrap;
+        }
+        .nav-profile-btn:hover {
+            background: var(--color-bg-secondary);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        .nav-avatar-circle {
+            width: 26px; height: 26px;
+            background: var(--color-primary);
+            color: #fff;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 700; font-size: 0.7rem;
+            flex-shrink: 0;
+        }
+        .nav-chevron {
+            width: 13px; height: 13px;
+            transition: transform 0.25s ease;
+            flex-shrink: 0;
+        }
+        .nav-profile-btn[aria-expanded="true"] .nav-chevron {
+            transform: rotate(180deg);
+        }
+
+        .nav-dropdown {
+            position: absolute;
+            right: 0;
+            top: calc(100% + 10px);
+            min-width: 210px;
+            background: rgba(255,255,255,0.92);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255,255,255,0.6);
+            border-radius: var(--radius-lg);
+            box-shadow: 0 8px 36px rgba(0,0,0,0.14);
+            padding: 8px;
+            z-index: 300;
+            transform-origin: top right;
+            animation: dropdownSlideIn 0.25s cubic-bezier(0.22,1,0.36,1) both;
+        }
+        body.theme-dark .nav-dropdown {
+            background: rgba(30,41,59,0.96);
+            border-color: rgba(255,255,255,0.1);
+            box-shadow: 0 8px 36px rgba(0,0,0,0.5);
+        }
+        body.theme-space .nav-dropdown {
+            background: rgba(10,22,40,0.96);
+            border-color: rgba(139,92,246,0.3);
+            box-shadow: 0 8px 36px rgba(139,92,246,0.15);
+        }
+        @keyframes dropdownSlideIn {
+            from { opacity: 0; transform: scale(0.9) translateY(-10px); }
+            to   { opacity: 1; transform: scale(1) translateY(0); }
+        }
+        .nav-dropdown[hidden] { display: none; }
+
+        .dropdown-user-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 12px 12px;
+            border-bottom: 1px solid var(--color-border);
+            margin-bottom: 6px;
+        }
+        .dropdown-avatar-lg {
+            width: 36px; height: 36px;
+            background: var(--color-primary);
+            color: #fff;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 700; font-size: 0.9rem;
+            flex-shrink: 0;
+        }
+        .dropdown-username-text {
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: var(--color-text);
+        }
+        .dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            width: 100%;
+            padding: 8px 12px;
+            border: none;
+            background: none;
+            border-radius: var(--radius-sm);
+            font-size: 0.875rem;
+            color: var(--color-text-secondary);
+            cursor: pointer;
+            text-decoration: none;
+            transition: background 0.12s, color 0.12s;
+            text-align: left;
+            font-family: inherit;
+        }
+        .dropdown-item:hover {
+            background: var(--color-bg-secondary);
+            color: var(--color-text);
+        }
+        .dropdown-item-icon { font-size: 0.95rem; width: 18px; text-align: center; }
+        .dropdown-divider { height: 1px; background: var(--color-border); margin: 6px 0; }
+        .dropdown-item.danger { color: #e53e3e; }
+        .dropdown-item.danger:hover { background: rgba(229,62,62,0.08); color: #c53030; }
+        body.theme-dark .dropdown-item.danger:hover { background: rgba(229,62,62,0.15); color: #fc8181; }
+
+        /* ── Dark mode: force proper dark background on body ── */
+        body.theme-dark {
+            background: #0F172A !important;
+        }
+        body.theme-dark .dashboard-title,
+        body.theme-dark .dashboard-subtitle,
+        body.theme-dark .section-block h3,
+        body.theme-dark .lb-header h1,
+        body.theme-dark .lb-header p,
+        body.theme-dark .lb-legend,
+        body.theme-dark .chat-topbar h2 {
+            color: #f1f5f9 !important;
+        }
+
+        /* Bot bubble text in dark */
+        body.theme-dark .bubble-text {
+            background: rgba(30,41,59,0.90) !important;
+            color: #e2e8f0 !important;
+        }
+
+        /* Session items text */
+        body.theme-dark .session-topic { color: #f1f5f9 !important; }
+        body.theme-dark .session-date  { color: #94a3b8 !important; }
+        body.theme-dark .session-item .btn { color: #94a3b8 !important; }
+
+        /* Profile card text */
+        body.theme-dark .profile-meta h3 { color: #f1f5f9 !important; }
+        body.theme-dark .profile-meta p  { color: #94a3b8 !important; }
+
+        /* Stat card labels */
+        body.theme-dark .stat-card .stat-label { color: #94a3b8 !important; }
+        body.theme-dark .stat-card .stat-value { color: #f1f5f9 !important; }
+        body.theme-dark .stat-card.highlight .stat-value { color: #60a5fa !important; }
+
+        /* Deep space */
+        body.theme-space {
+            background: #050B1F !important;
+        }
+        body.theme-space .dashboard-title,
+        body.theme-space .lb-header h1,
+        body.theme-space .chat-topbar h2 { color: #f1f5f9 !important; }
+        body.theme-space .dashboard-subtitle,
+        body.theme-space .lb-header p,
+        body.theme-space .lb-legend      { color: #a78bfa !important; }
+        body.theme-space .bubble-text {
+            background: rgba(10,5,40,0.90) !important;
+            color: #e2e8f0 !important;
+        }
     </style>
 </head>
 <body>
+    <!-- Apply saved theme immediately to prevent flash -->
+    <script>
+        (function() {
+            var t = localStorage.getItem('mb-theme');
+            if (t && t !== 'light') document.body.classList.add('theme-' + t);
+        })();
+    </script>
+
+    <!-- Bubble canvas — fixed, full-page, behind all content -->
+    <canvas id="bubble-canvas" aria-hidden="true"></canvas>
+
     <!-- Navigation -->
     <nav class="topnav">
         <a href="index.html" class="topnav-logo">
@@ -90,20 +502,29 @@
             <a href="about.html">About</a>
         </div>
         <div class="topnav-actions">
+            <!-- Theme toggle — always visible -->
+            <button class="theme-btn" id="theme-btn" title="Toggle theme">🌙</button>
+
             <div id="nav-auth-links" style="display:flex; gap:8px;">
                 <button class="btn btn-ghost" data-open-login>Log in</button>
                 <button class="btn btn-primary" data-open-register>Get started</button>
             </div>
+
             <div id="nav-user-links" style="display:none; gap:8px; align-items:center;">
                 <a href="dashboard.html" class="btn btn-ghost">Dashboard</a>
                 <a href="chat.html" class="btn btn-primary">Chat</a>
-                <span id="nav-username" style="font-size:0.875rem; color:var(--color-text-secondary);"></span>
+                <!-- nav-username must stay — main.js sets its textContent -->
+                <span id="nav-username" style="display:none;" aria-hidden="true"></span>
+                <!-- Profile dropdown injected by JS around nav-username -->
             </div>
         </div>
     </nav>
 
     <!-- Hero -->
-    <section class="hero hero-bg page-enter">
+    <section class="hero hero-bg">
+        <div class="hero-brain-wrap" aria-hidden="true">
+            <div class="hero-brain">🧠</div>
+        </div>
         <div class="hero-eyebrow">Cognitive Offload Resistance</div>
         <h1>Think before you search.<br>Learn by recalling.</h1>
         <p>
@@ -114,13 +535,13 @@
             <button class="btn btn-primary btn-lg" data-open-register>Start learning free</button>
             <a href="features.html" class="btn btn-secondary btn-lg">See how it works</a>
         </div>
-        <div class="stat-row" data-aos="fade-up" data-aos-delay="200">
+        <div class="stat-row">
             <div class="stat-item">
-                <div class="stat-number">3</div>
+                <div class="stat-number" data-target="3">3</div>
                 <div class="stat-label">AI Agents</div>
             </div>
             <div class="stat-item">
-                <div class="stat-number">10</div>
+                <div class="stat-number" data-target="10">10</div>
                 <div class="stat-label">Points per challenge</div>
             </div>
             <div class="stat-item">
@@ -132,27 +553,27 @@
 
     <!-- Features overview -->
     <section class="section">
-        <div class="section-header" data-aos="fade-up">
+        <div class="section-header">
             <h2>Built to resist cognitive offload</h2>
             <p>Every feature is designed to make you think harder — not less.</p>
         </div>
         <div class="features-grid">
-            <div class="feature-card card-hover" data-aos="fade-up" data-aos-delay="0">
+            <div class="feature-card">
                 <div class="feature-icon">🧠</div>
                 <h3>Socratic Chatbot</h3>
                 <p>Our AI never gives you the answer first. It prompts your thinking with Socratic questions before revealing anything.</p>
             </div>
-            <div class="feature-card card-hover" data-aos="fade-up" data-aos-delay="80">
+            <div class="feature-card">
                 <div class="feature-icon">⚡</div>
                 <h3>Recall Challenges</h3>
                 <p>After every 3 exchanges, a challenge appears testing what you remember — scored 0 to 10 points.</p>
             </div>
-            <div class="feature-card card-hover" data-aos="fade-up" data-aos-delay="160">
+            <div class="feature-card">
                 <div class="feature-icon">📊</div>
                 <h3>Progress Dashboard</h3>
                 <p>Track your points, streaks, and learning sessions. See how your recall improves over time.</p>
             </div>
-            <div class="feature-card card-hover" data-aos="fade-up" data-aos-delay="240">
+            <div class="feature-card">
                 <div class="feature-icon">🏆</div>
                 <h3>Leaderboard</h3>
                 <p>Compete with others. The top thinkers earn the most points through consistent active recall.</p>
@@ -162,26 +583,26 @@
 
     <!-- How it works -->
     <section class="how-it-works">
-        <div class="section-header" data-aos="fade-up">
+        <div class="section-header">
             <h2>How it works</h2>
         </div>
         <div class="steps-grid">
-            <div class="step-card" data-aos="fade-up" data-aos-delay="0">
+            <div class="step-card">
                 <div class="step-number">1</div>
                 <h4>Ask a question</h4>
                 <p>Type any question or topic you want to understand.</p>
             </div>
-            <div class="step-card" data-aos="fade-up" data-aos-delay="80">
+            <div class="step-card">
                 <div class="step-number">2</div>
                 <h4>Think first</h4>
                 <p>Mindful asks what you already know before responding.</p>
             </div>
-            <div class="step-card" data-aos="fade-up" data-aos-delay="160">
+            <div class="step-card">
                 <div class="step-number">3</div>
                 <h4>Face the challenge</h4>
                 <p>Every 3rd exchange triggers a recall question based on your conversation.</p>
             </div>
-            <div class="step-card" data-aos="fade-up" data-aos-delay="240">
+            <div class="step-card">
                 <div class="step-number">4</div>
                 <h4>Earn points</h4>
                 <p>Score up to 10 points per challenge and climb the leaderboard.</p>
@@ -191,13 +612,9 @@
 
     <!-- CTA -->
     <section class="cta-section">
-        <h2 data-aos="fade-up">Ready to actually learn?</h2>
-        <p data-aos="fade-up" data-aos-delay="80">
-            Stop Googling. Start thinking. Join mindful-bot today.
-        </p>
-        <button class="btn btn-white btn-lg" data-open-register data-aos="fade-up" data-aos-delay="160">
-            Create free account
-        </button>
+        <h2>Ready to actually learn?</h2>
+        <p>Stop Googling. Start thinking. Join mindful-bot today.</p>
+        <button class="btn btn-white btn-lg" data-open-register>Create free account</button>
     </section>
 
     <!-- Footer -->
@@ -212,7 +629,7 @@
         </div>
     </footer>
 
-    <!-- Auth Modal -->
+    <!-- Auth Modal — IDs and structure preserved exactly for main.js -->
     <div id="auth-modal" class="modal-overlay hidden modal-backdrop">
         <div class="modal-box modal-content">
             <button id="close-auth-modal" class="btn btn-ghost btn-sm" style="float:right">✕</button>
@@ -269,5 +686,472 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="js/config.js"></script>
     <script src="js/main.js"></script>
+
+    <!-- Page enhancements — runs after main.js -->
+    <script>
+    (function () {
+        'use strict';
+
+        /* ═══════════════════════════════════════════════════════════
+           1. FLOATING 3D BUBBLE BACKGROUND
+        ═══════════════════════════════════════════════════════════ */
+        function initBubbleCanvas() {
+            const canvas = document.getElementById('bubble-canvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            var frame = 0;
+
+            function resize() {
+                canvas.width  = window.innerWidth;
+                canvas.height = window.innerHeight;
+            }
+            resize();
+            window.addEventListener('resize', resize, { passive: true });
+
+            // Water bubble factory
+            function createBubble() {
+                var size = 8 + Math.random() * 48;
+                return {
+                    x:           Math.random() * canvas.width,
+                    y:           canvas.height + size,
+                    r:           size,
+                    speed:       0.3 + Math.random() * 0.7,
+                    wobble:      0,
+                    wobbleSpeed: 0.018 + Math.random() * 0.022,
+                    wobbleAmp:   1.2 + Math.random() * 2.2,
+                    opacity:     0.12 + Math.random() * 0.18,
+                    pop:         false,
+                    popFrame:    0,
+                };
+            }
+
+            // Start with 25 bubbles at random heights
+            var bubbles = Array.from({ length: 25 }, function() {
+                var b = createBubble();
+                b.y = Math.random() * canvas.height; // scatter on load
+                return b;
+            });
+
+            function drawBubble(b) {
+                ctx.save();
+                ctx.globalAlpha = b.opacity;
+
+                var x = b.x + Math.sin(b.wobble) * b.wobbleAmp;
+                var y = b.y;
+                var r = b.r;
+
+                // Main bubble body — transparent with just a rim
+                ctx.beginPath();
+                ctx.arc(x, y, r, 0, Math.PI * 2);
+
+                var isDark  = document.body.classList.contains('theme-dark');
+                var isSpace = document.body.classList.contains('theme-space');
+
+                var fillColor = isSpace
+                    ? 'rgba(139,92,246,0.12)'
+                    : isDark
+                    ? 'rgba(96,165,250,0.13)'
+                    : 'rgba(99,130,246,0.10)';
+
+                ctx.fillStyle = fillColor;
+                ctx.fill();
+
+                // Rim — the key to making it look like water
+                var rimColor = isSpace
+                    ? 'rgba(167,139,250,0.80)'
+                    : isDark
+                    ? 'rgba(147,197,253,0.75)'
+                    : 'rgba(79,110,246,0.60)';
+
+                ctx.strokeStyle = rimColor;
+                ctx.lineWidth = 2;
+                ctx.stroke();
+
+                // Top-left specular highlight (light reflection)
+                var hlX = x - r * 0.32;
+                var hlY = y - r * 0.32;
+                var hlR = r * 0.22;
+                var hl  = ctx.createRadialGradient(hlX, hlY, 0, hlX, hlY, hlR);
+                hl.addColorStop(0, 'rgba(255,255,255,0.85)');
+                hl.addColorStop(1, 'rgba(255,255,255,0)');
+                ctx.beginPath();
+                ctx.arc(hlX, hlY, hlR, 0, Math.PI * 2);
+                ctx.fillStyle = hl;
+                ctx.fill();
+
+                // Bottom-right secondary shimmer
+                var sh = ctx.createRadialGradient(
+                    x + r * 0.28, y + r * 0.28, 0,
+                    x + r * 0.28, y + r * 0.28, r * 0.18
+                );
+                sh.addColorStop(0, 'rgba(255,255,255,0.25)');
+                sh.addColorStop(1, 'rgba(255,255,255,0)');
+                ctx.beginPath();
+                ctx.arc(x + r*0.28, y + r*0.28, r*0.18, 0, Math.PI*2);
+                ctx.fillStyle = sh;
+                ctx.fill();
+
+                ctx.restore();
+            }
+
+            function drawPop(b) {
+                // Expanding ring when bubble pops
+                ctx.save();
+                var progress = b.popFrame / 12;
+                ctx.globalAlpha = b.opacity * (1 - progress);
+                ctx.beginPath();
+                ctx.arc(b.x, b.y, b.r + b.popFrame * 3, 0, Math.PI * 2);
+                ctx.strokeStyle = 'rgba(79,110,246,0.65)';
+                ctx.lineWidth = 1;
+                ctx.stroke();
+                ctx.restore();
+            }
+
+            function drawDepthBackground() {
+                var cx = canvas.width  / 2;
+                var cy = canvas.height / 2;
+                var isDark  = document.body.classList.contains('theme-dark');
+                var isSpace = document.body.classList.contains('theme-space');
+
+                var radial = ctx.createRadialGradient(cx, cy, 0, cx, cy,
+                                 Math.max(canvas.width, canvas.height) * 0.75);
+
+                if (isSpace) {
+                    radial.addColorStop(0,   'rgba(30,20,80,0.18)');
+                    radial.addColorStop(0.5, 'rgba(15,10,50,0.22)');
+                    radial.addColorStop(1,   'rgba(5,5,30,0.35)');
+                } else if (isDark) {
+                    radial.addColorStop(0,   'rgba(30,58,120,0.12)');
+                    radial.addColorStop(0.5, 'rgba(15,30,80,0.16)');
+                    radial.addColorStop(1,   'rgba(5,10,40,0.28)');
+                } else {
+                    radial.addColorStop(0,   'rgba(200,220,255,0.18)');
+                    radial.addColorStop(0.5, 'rgba(180,200,255,0.22)');
+                    radial.addColorStop(1,   'rgba(140,170,255,0.30)');
+                }
+
+                ctx.fillStyle = radial;
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                var gridColor = isSpace ? 'rgba(139,92,246,0.08)' : isDark ? 'rgba(96,165,250,0.07)' : 'rgba(99,130,246,0.09)';
+                var numLines = 16;
+                ctx.strokeStyle = gridColor;
+                ctx.lineWidth   = 0.8;
+                for (var i = 0; i < numLines; i++) {
+                    var angle = (i / numLines) * Math.PI * 2;
+                    var edgeX = cx + Math.cos(angle) * canvas.width;
+                    var edgeY = cy + Math.sin(angle) * canvas.height;
+                    ctx.beginPath();
+                    ctx.moveTo(cx, cy);
+                    ctx.lineTo(edgeX, edgeY);
+                    ctx.stroke();
+                }
+
+                var numRings   = 8;
+                var maxRadius  = Math.max(canvas.width, canvas.height) * 0.72;
+                var pulseSpeed = 0.0018;
+                for (var r = 0; r < numRings; r++) {
+                    var progress = ((frame * pulseSpeed) + (r / numRings)) % 1;
+                    var radius   = progress * maxRadius;
+                    var alpha    = Math.sin(progress * Math.PI) * 0.07;
+                    var ringColor = isSpace ? 'rgba(139,92,246,' + alpha + ')' : isDark ? 'rgba(96,165,250,' + alpha + ')' : 'rgba(99,130,246,' + alpha + ')';
+                    ctx.beginPath();
+                    ctx.arc(cx, cy, radius, 0, Math.PI * 2);
+                    ctx.strokeStyle = ringColor;
+                    ctx.lineWidth   = 1;
+                    ctx.stroke();
+                }
+            }
+
+            function animate() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                drawDepthBackground();
+
+                bubbles.forEach(function(b, i) {
+                    if (b.pop) {
+                        drawPop(b);
+                        b.popFrame++;
+                        if (b.popFrame > 12) bubbles[i] = createBubble();
+                        return;
+                    }
+
+                    drawBubble(b);
+
+                    // Rise upward
+                    b.y      -= b.speed;
+                    b.wobble += b.wobbleSpeed;
+
+                    // Random pop chance near top, guaranteed at top
+                    if (b.y < -b.r) {
+                        bubbles[i] = createBubble();
+                    } else if (b.y < canvas.height * 0.15 && Math.random() < 0.004) {
+                        b.pop = true;
+                    }
+                });
+
+                // Occasionally spawn new bubble to keep density
+                if (bubbles.length < 35 && Math.random() < 0.04) {
+                    bubbles.push(createBubble());
+                }
+
+                frame++;
+                requestAnimationFrame(animate);
+            }
+
+            animate();
+        }
+
+        /* ═══════════════════════════════════════════════════════════
+           2. 3D TILT CARDS
+        ═══════════════════════════════════════════════════════════ */
+        function initTiltCards() {
+            document.querySelectorAll('.feature-card, .step-card').forEach(function (card) {
+                // Add shine div
+                var shine = document.createElement('div');
+                shine.className = 'card-shine';
+                card.appendChild(shine);
+
+                var resetTimer = null;
+
+                card.addEventListener('mousemove', function (e) {
+                    if (resetTimer) clearTimeout(resetTimer);
+                    var rect = card.getBoundingClientRect();
+                    var x = e.clientX - rect.left;
+                    var y = e.clientY - rect.top;
+                    var cx = rect.width  / 2;
+                    var cy = rect.height / 2;
+
+                    var rotX = ((y - cy) / cy) * -13;
+                    var rotY = ((x - cx) / cx) *  13;
+
+                    var shadowDX = ((x - cx) / cx) * -14;
+                    var shadowDY = ((y - cy) / cy) * -10;
+
+                    card.style.transition = 'none';
+                    card.style.transform =
+                        'perspective(900px) rotateX(' + rotX + 'deg) rotateY(' + rotY + 'deg) translateZ(18px) scale(1.025)';
+                    card.style.boxShadow =
+                        shadowDX + 'px ' + (shadowDY + 12) + 'px 36px rgba(0,0,0,0.16), ' +
+                        '0 4px 12px rgba(0,0,0,0.08)';
+
+                    var sx = (x / rect.width)  * 100;
+                    var sy = (y / rect.height) * 100;
+                    shine.style.background =
+                        'radial-gradient(circle at ' + sx + '% ' + sy + '%, rgba(255,255,255,0.28) 0%, transparent 62%)';
+                    shine.style.opacity = '1';
+                });
+
+                card.addEventListener('mouseleave', function () {
+                    card.style.transition =
+                        'transform 0.55s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.55s ease';
+                    card.style.transform = '';
+                    card.style.boxShadow = '';
+                    shine.style.opacity = '0';
+                });
+            });
+        }
+
+        /* ═══════════════════════════════════════════════════════════
+           3. HERO STAT COUNT-UP
+        ═══════════════════════════════════════════════════════════ */
+        function heroCountUp(el, target, duration) {
+            var start = performance.now();
+            (function step(now) {
+                var progress = Math.min((now - start) / duration, 1);
+                var eased    = 1 - Math.pow(1 - progress, 3);
+                el.textContent = Math.round(target * eased);
+                if (progress < 1) requestAnimationFrame(step);
+            })(start);
+        }
+
+        function initHeroStats() {
+            // Wait for hero text animations to settle (~1.2s delay)
+            setTimeout(function () {
+                document.querySelectorAll('.stat-number[data-target]').forEach(function (el) {
+                    var target = parseInt(el.dataset.target, 10);
+                    if (!isNaN(target)) {
+                        el.textContent = '0';
+                        heroCountUp(el, target, 1100);
+                    }
+                });
+            }, 1200);
+        }
+
+        /* ═══════════════════════════════════════════════════════════
+           4. PROFILE DROPDOWN
+        ═══════════════════════════════════════════════════════════ */
+        function initProfileDropdown() {
+            var usernameSpan = document.getElementById('nav-username');
+            var userLinks    = document.getElementById('nav-user-links');
+            if (!usernameSpan || !userLinks) return;
+
+            // Build wrapper button
+            var wrap = document.createElement('div');
+            wrap.className = 'nav-profile-wrap';
+
+            var btn = document.createElement('button');
+            btn.className = 'nav-profile-btn';
+            btn.setAttribute('aria-expanded', 'false');
+            btn.setAttribute('aria-haspopup', 'true');
+
+            var avatarEl = document.createElement('div');
+            avatarEl.className = 'nav-avatar-circle';
+            avatarEl.textContent = '?';
+
+            var nameEl = document.createElement('span');
+            nameEl.className = 'nav-profile-name';
+
+            // Chevron SVG
+            var chevron = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+            chevron.setAttribute('viewBox', '0 0 20 20');
+            chevron.setAttribute('fill', 'currentColor');
+            chevron.classList.add('nav-chevron');
+            chevron.innerHTML = '<path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd"/>';
+
+            btn.appendChild(avatarEl);
+            btn.appendChild(nameEl);
+            btn.appendChild(chevron);
+
+            // Dropdown panel
+            var dropdown = document.createElement('div');
+            dropdown.className = 'nav-dropdown';
+            dropdown.hidden = true;
+            dropdown.innerHTML =
+                '<div class="dropdown-user-header">' +
+                    '<div class="dropdown-avatar-lg" id="dd-avatar">?</div>' +
+                    '<div class="dropdown-username-text" id="dd-username">...</div>' +
+                '</div>' +
+                '<a href="dashboard.html" class="dropdown-item"><span class="dropdown-item-icon">📊</span> My Dashboard</a>' +
+                '<a href="settings.html" class="dropdown-item"><span class="dropdown-item-icon">⚙️</span> Settings</a>' +
+                '<div class="dropdown-divider"></div>' +
+                '<button class="dropdown-item danger" id="dd-signout"><span class="dropdown-item-icon">🚪</span> Sign Out</button>';
+
+            wrap.appendChild(btn);
+            wrap.appendChild(dropdown);
+            userLinks.appendChild(wrap);
+
+            // Toggle
+            btn.addEventListener('click', function (e) {
+                e.stopPropagation();
+                var opening = dropdown.hidden;
+                dropdown.hidden = !opening;
+                btn.setAttribute('aria-expanded', String(opening));
+                if (opening) {
+                    // Re-trigger animation
+                    dropdown.style.animation = 'none';
+                    requestAnimationFrame(function () {
+                        dropdown.style.animation = '';
+                    });
+                }
+            });
+
+            // Close on outside click
+            document.addEventListener('click', function () {
+                dropdown.hidden = true;
+                btn.setAttribute('aria-expanded', 'false');
+            });
+            dropdown.addEventListener('click', function (e) { e.stopPropagation(); });
+
+            // Sign out
+            document.getElementById('dd-signout').addEventListener('click', function () {
+                if (typeof logout === 'function') logout();
+            });
+
+            // Watch nav-username for changes set by main.js
+            function syncUsername() {
+                var name = usernameSpan.textContent.trim();
+                if (!name) return;
+                var initial = name[0].toUpperCase();
+                nameEl.textContent        = name;
+                avatarEl.textContent      = initial;
+                var ddAv = document.getElementById('dd-avatar');
+                var ddUn = document.getElementById('dd-username');
+                if (ddAv) ddAv.textContent = initial;
+                if (ddUn) ddUn.textContent = name;
+            }
+
+            var obs = new MutationObserver(syncUsername);
+            obs.observe(usernameSpan, { childList: true, subtree: true, characterData: true });
+            syncUsername(); // in case already set
+        }
+
+        /* ═══════════════════════════════════════════════════════════
+           5. THEME SWITCHER
+        ═══════════════════════════════════════════════════════════ */
+        var THEMES      = ['light', 'dark', 'space'];
+        var THEME_ICONS = { light: '🌙', dark: '☀️', space: '🌌' };
+
+        function applyTheme(t) {
+            document.body.classList.remove('theme-dark', 'theme-space');
+            if (t !== 'light') document.body.classList.add('theme-' + t);
+        }
+
+        function initThemeSwitcher() {
+            var btn = document.getElementById('theme-btn');
+            if (!btn) return;
+
+            var current = localStorage.getItem('mb-theme') || 'light';
+            applyTheme(current);
+            btn.textContent = THEME_ICONS[current];
+
+            btn.addEventListener('click', function () {
+                var idx = THEMES.indexOf(current);
+                current = THEMES[(idx + 1) % THEMES.length];
+                applyTheme(current);
+                btn.textContent = THEME_ICONS[current];
+                localStorage.setItem('mb-theme', current);
+            });
+        }
+
+        /* ═══════════════════════════════════════════════════════════
+           6. SCROLL REVEAL (IntersectionObserver)
+        ═══════════════════════════════════════════════════════════ */
+        function initScrollReveal() {
+            var targets = document.querySelectorAll(
+                '.feature-card, .step-card, .section-header'
+            );
+
+            targets.forEach(function (el) {
+                el.classList.add('scroll-hidden');
+            });
+
+            var io = new IntersectionObserver(function (entries) {
+                entries.forEach(function (entry) {
+                    if (!entry.isIntersecting) return;
+
+                    // Stagger by sibling index inside parent
+                    var parent   = entry.target.parentElement;
+                    var siblings = Array.from(
+                        parent.querySelectorAll('.scroll-hidden, .scroll-visible')
+                    );
+                    var idx = siblings.indexOf(entry.target);
+
+                    setTimeout(function () {
+                        entry.target.classList.remove('scroll-hidden');
+                        entry.target.classList.add('scroll-visible');
+                    }, Math.max(0, idx) * 90);
+
+                    io.unobserve(entry.target);
+                });
+            }, { threshold: 0.12, rootMargin: '0px 0px -30px 0px' });
+
+            targets.forEach(function (el) { io.observe(el); });
+        }
+
+        /* ═══════════════════════════════════════════════════════════
+           BOOT
+        ═══════════════════════════════════════════════════════════ */
+        document.addEventListener('DOMContentLoaded', function () {
+            initBubbleCanvas();
+            initTiltCards();
+            initHeroStats();
+            initThemeSwitcher();
+            initScrollReveal();
+            // Profile dropdown — wait a tick so main.js DOMContentLoaded runs first
+            setTimeout(initProfileDropdown, 0);
+        });
+
+    })();
+    </script>
 </body>
 </html>
