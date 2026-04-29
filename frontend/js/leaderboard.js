@@ -27,7 +27,7 @@ async function loadLeaderboard() {
         table.innerHTML = entries.map((entry, i) => {
             const medal = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : '';
             return `
-                <tr class="lb-row" data-aos="fade-up" data-aos-delay="${i * 40}">
+                <tr class="lb-row lb-row-animate" style="animation-delay:${i * 45}ms">
                     <td class="lb-rank">${medal || entry.rank}</td>
                     <td class="lb-username">${escSafe(entry.username)}</td>
                     <td class="lb-points">${entry.total_points.toLocaleString()}</td>
@@ -39,6 +39,8 @@ async function loadLeaderboard() {
                 </tr>
             `;
         }).join('');
+        // Refresh AOS so any data-aos elements injected dynamically are observed
+        if (typeof AOS !== 'undefined') AOS.refresh();
     } catch (err) {
         table.innerHTML = `<tr><td colspan="4" class="empty-row">Could not load leaderboard: ${err.message}</td></tr>`;
     }

@@ -1,6 +1,7 @@
 from flask import Blueprint, request, jsonify
-from backend.database.supabase import get_client, get_user_from_token
+from backend.database.supabase import get_authed_client, get_user_from_token
 from backend.agents import chatbot, challenger
+from backend.app import limiter
 
 chat_bp = Blueprint("chat", __name__)
 
@@ -8,21 +9,21 @@ CHALLENGE_EVERY = 3  # trigger challenge every N exchanges
 
 
 def _require_auth():
-    """Extract and verify Bearer token. Returns (user, error_response)."""
+    """Extract and verify Bearer token. Returns (user, token, error_response)."""
     auth = request.headers.get("Authorization", "")
     if not auth.startswith("Bearer "):
-        return None, (jsonify({"error": "Unauthorized"}), 401)
+        return None, None, (jsonify({"error": "Unauthorized"}), 401)
     token = auth[7:]
     user = get_user_from_token(token)
     if not user:
-        return None, (jsonify({"error": "Invalid token"}), 401)
-    return user, None
+        return None, None, (jsonify({"error": "Invalid token"}), 401)
+    return user, token, None
 
 
-def _get_session_history(session_id: str) -> list[dict]:
+def _get_session_history(session_id: str, token: str) -> list[dict]:
     """Fetch last 20 messages for a session from Supabase."""
     try:
-        db = get_client()
+        db = get_authed_client(token)
         result = (
             db.table("messages")
             .select("role, content")
@@ -38,8 +39,9 @@ def _get_session_history(session_id: str) -> list[dict]:
 
 
 @chat_bp.post("/chat")
+@limiter.limit("30 per hour")
 def send_message():
-    user, err = _require_auth()
+    user, token, err = _require_auth()
     if err:
         return err
 
@@ -52,7 +54,7 @@ def send_message():
     if not session_id:
         return jsonify({"error": "session_id is required"}), 400
 
-    db = get_client()
+    db = get_authed_client(token)
 
     # Ensure session exists
     try:
@@ -63,7 +65,7 @@ def send_message():
         print(f"[ERROR] sessions.upsert failed: {e}")
 
     # Fetch history before saving — used for AI context and exchange counting
-    history = _get_session_history(session_id)
+    history = _get_session_history(session_id, token)
 
     # Get chatbot response
     try:
@@ -98,7 +100,7 @@ def send_message():
 
 @chat_bp.get("/chat/history")
 def get_history():
-    user, err = _require_auth()
+    _, token, err = _require_auth()
     if err:
         return err
 
@@ -106,13 +108,14 @@ def get_history():
     if not session_id:
         return jsonify({"error": "session_id is required"}), 400
 
-    history = _get_session_history(session_id)
+    history = _get_session_history(session_id, token)
     return jsonify({"messages": history})
 
 
 @chat_bp.post("/challenge")
+@limiter.limit("20 per hour")
 def generate_challenge():
-    user, err = _require_auth()
+    _, token, err = _require_auth()
     if err:
         return err
 
@@ -121,7 +124,7 @@ def generate_challenge():
     if not session_id:
         return jsonify({"error": "session_id is required"}), 400
 
-    history = _get_session_history(session_id)
+    history = _get_session_history(session_id, token)
     if len(history) < 2:
         return jsonify({"error": "Not enough conversation to generate a challenge"}), 400
 
@@ -132,7 +135,7 @@ def generate_challenge():
 
     # Save challenge to DB (answer filled in after evaluation)
     try:
-        db = get_client()
+        db = get_authed_client(token)
         result = (
             db.table("challenges")
             .insert({
@@ -150,8 +153,9 @@ def generate_challenge():
 
 
 @chat_bp.post("/challenge/evaluate")
+@limiter.limit("20 per hour")
 def evaluate_challenge():
-    user, err = _require_auth()
+    user, token, err = _require_auth()
     if err:
         return err
 
@@ -176,7 +180,7 @@ def evaluate_challenge():
     # Update challenge record
     if challenge_id:
         try:
-            db = get_client()
+            db = get_authed_client(token)
             db.table("challenges").update({
                 "user_answer": user_answer,
                 "correct": result.get("is_correct", False),
@@ -187,26 +191,29 @@ def evaluate_challenge():
 
     # Update user score via upsert
     try:
-        db = get_client()
+        db = get_authed_client(token)
         existing = db.table("scores").select("*").eq("user_id", user.id).execute()
         if existing.data:
             current = existing.data[0]
             new_total = current["total_points"] + points_earned
-            new_streak = current["streak"] + 1 if result.get("is_correct") else 0
+            new_streak = current["streak"] + 1
+            new_longest = max(current.get("longest_streak", 0), new_streak)
             new_challenges = current.get("challenges_completed", 0) + 1
         else:
             new_total = points_earned
-            new_streak = 1 if result.get("is_correct") else 0
+            new_streak = 1
+            new_longest = 1
             new_challenges = 1
 
         db.table("scores").upsert({
             "user_id": user.id,
             "total_points": new_total,
             "streak": new_streak,
+            "longest_streak": new_longest,
             "challenges_completed": new_challenges,
             "updated_at": "now()",
         }, on_conflict="user_id").execute()
-        print(f"[INFO] score updated: user={user.id} total={new_total} streak={new_streak} challenges={new_challenges}")
+        print(f"[INFO] score updated: user={user.id} total={new_total} streak={new_streak} longest={new_longest} challenges={new_challenges}")
     except Exception as e:
         print(f"[ERROR] score upsert failed: {e}")
 

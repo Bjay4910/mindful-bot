@@ -20,6 +20,16 @@ def get_client() -> Client:
     return _client
 
 
+def get_authed_client(token: str) -> Client:
+    """Return a per-request Supabase client with the user's JWT set.
+    This makes auth.uid() work correctly in RLS policies."""
+    url = os.getenv("SUPABASE_URL")
+    key = os.getenv("SUPABASE_KEY")
+    client = create_client(url, key)
+    client.postgrest.auth(token)
+    return client
+
+
 def get_user_from_token(token: str):
     """Verify a Supabase JWT and return the user, or None if invalid."""
     try:

@@ -104,7 +104,7 @@ async function sendMessage() {
 function appendUserMessage(text) {
     const messages = document.getElementById('chat-messages');
     const el = document.createElement('div');
-    el.className = 'chat-bubble user-bubble bubble-enter';
+    el.className = 'chat-bubble user-bubble user-bubble-enter';
     el.textContent = text;
     messages.appendChild(el);
     scrollToBottom();
@@ -113,7 +113,7 @@ function appendUserMessage(text) {
 function appendBotMessage(text) {
     const messages = document.getElementById('chat-messages');
     const el = document.createElement('div');
-    el.className = 'chat-bubble bot-bubble bubble-enter';
+    el.className = 'chat-bubble bot-bubble bot-bubble-enter';
     el.innerHTML = `
         <div class="bot-avatar">M</div>
         <div class="bubble-text">${escapeHtml(text)}</div>
@@ -164,7 +164,7 @@ async function triggerChallenge() {
 
     // Append a loading card directly in the chat
     const card = document.createElement('div');
-    card.className = 'challenge-card-inline bubble-enter';
+    card.className = 'challenge-card-inline challenge-card-enter';
     card.innerHTML = `
         <div class="challenge-loading-inline">
             <div class="spinner"></div>
@@ -291,12 +291,12 @@ async function loadUserScore() {
         const data = await apiFetch(`/scores/${currentUser.id}`);
         const el = document.getElementById('user-score');
         if (el) {
-            el.textContent = data.total_points;
-            el.classList.add('score-pulse');
-            el.addEventListener('animationend', () => el.classList.remove('score-pulse'), { once: true });
+            countUp(el, data.total_points ?? 0);
+            el.classList.add('score-pop');
+            el.addEventListener('animationend', () => el.classList.remove('score-pop'), { once: true });
         }
         const streak = document.getElementById('user-streak');
-        if (streak) streak.textContent = data.streak;
+        if (streak) countUp(streak, data.streak ?? 0);
     } catch (err) {
         // score display is non-critical
     }

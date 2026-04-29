@@ -181,11 +181,41 @@ function initAuthModal() {
     });
 }
 
+// ── Navbar scroll shrink ─────────────────────────────────────────────────────
+function initNavScroll() {
+    const nav = document.querySelector('.topnav');
+    if (!nav) return;
+    const onScroll = () => {
+        nav.classList.toggle('nav-scrolled', window.scrollY > 20);
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll(); // apply on load in case page is already scrolled
+}
+
+// ── Count-up animation ────────────────────────────────────────────────────────
+function countUp(el, target, duration = 900) {
+    if (!el) return;
+    const start = parseInt(el.textContent) || 0;
+    const diff = target - start;
+    if (diff === 0) return;
+    const startTime = performance.now();
+    function step(now) {
+        const elapsed = now - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        // ease-out cubic
+        const eased = 1 - Math.pow(1 - progress, 3);
+        el.textContent = Math.round(start + diff * eased);
+        if (progress < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+}
+
 // ── Init on DOM ready ─────────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
     AOS.init({ duration: 600, once: true, offset: 40 });
     updateNavState();
     initAuthModal();
+    initNavScroll();
 
     // Logout button
     document.getElementById('logout-btn')?.addEventListener('click', async e => {

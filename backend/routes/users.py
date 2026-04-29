@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify
-from backend.database.supabase import get_client, get_user_from_token
+from backend.database.supabase import get_client, get_authed_client, get_user_from_token
 
 users_bp = Blueprint("users", __name__)
 
@@ -7,12 +7,12 @@ users_bp = Blueprint("users", __name__)
 def _require_auth():
     auth = request.headers.get("Authorization", "")
     if not auth.startswith("Bearer "):
-        return None, (jsonify({"error": "Unauthorized"}), 401)
+        return None, None, (jsonify({"error": "Unauthorized"}), 401)
     token = auth[7:]
     user = get_user_from_token(token)
     if not user:
-        return None, (jsonify({"error": "Invalid token"}), 401)
-    return user, None
+        return None, None, (jsonify({"error": "Invalid token"}), 401)
+    return user, token, None
 
 
 @users_bp.post("/users/register")
@@ -97,11 +97,11 @@ def login():
 
 @users_bp.get("/users/<user_id>")
 def get_user(user_id):
-    user, err = _require_auth()
+    user, token, err = _require_auth()
     if err:
         return err
 
-    db = get_client()
+    db = get_authed_client(token)
     try:
         result = db.table("users").select("id, username, email, created_at").eq("id", user_id).execute()
         if not result.data:

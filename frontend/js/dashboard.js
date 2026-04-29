@@ -17,9 +17,22 @@ async function loadDashboard() {
     // Load score
     try {
         const data = await apiFetch(`/scores/${user.id}`);
-        document.getElementById('total-points').textContent = data.total_points ?? 0;
-        document.getElementById('streak-count').textContent = data.streak ?? 0;
-        document.getElementById('rank-number').textContent = data.rank ? `#${data.rank}` : '—';
+        const totalEl  = document.getElementById('total-points');
+        const streakEl = document.getElementById('streak-count');
+        const rankEl   = document.getElementById('rank-number');
+
+        // Reveal animation
+        [totalEl, streakEl, rankEl].forEach(el => {
+            if (el) el.classList.add('stat-reveal');
+        });
+
+        countUp(totalEl,  data.total_points ?? 0, 1000);
+        countUp(streakEl, data.streak ?? 0, 700);
+        if (rankEl) rankEl.textContent = data.rank ? `#${data.rank}` : '—';
+
+        if (totalEl) totalEl.classList.add('counting');
+        if (totalEl) totalEl.addEventListener('animationend',
+            () => totalEl.classList.remove('counting'), { once: true });
     } catch (err) {
         showToast('Could not load score: ' + err.message, 'error');
     }
