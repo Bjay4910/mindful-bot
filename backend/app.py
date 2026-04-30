@@ -9,8 +9,11 @@ load_dotenv()
 app = Flask(__name__)
 app.secret_key = os.getenv("FLASK_SECRET_KEY", "dev-secret")
 
-# Allow all origins for development
-CORS(app)
+CORS(app, origins=[
+    "http://localhost:5500",
+    "http://127.0.0.1:5500",
+    "https://mindful-bot-three.vercel.app"
+])
 
 limiter.init_app(app)
 
