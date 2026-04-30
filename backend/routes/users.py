@@ -35,15 +35,19 @@ def register():
 
         user_id = auth_response.user.id
 
+        # Use the new user's JWT so auth.uid() resolves correctly in RLS
+        access_token = auth_response.session.access_token if auth_response.session else None
+        authed_db = get_authed_client(access_token) if access_token else db
+
         # Create user profile
-        db.table("users").insert({
+        authed_db.table("users").insert({
             "id": user_id,
             "username": username,
             "email": email,
         }).execute()
 
         # Initialize score
-        db.table("scores").insert({
+        authed_db.table("scores").insert({
             "user_id": user_id,
             "total_points": 0,
             "streak": 0,
