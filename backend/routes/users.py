@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify
-from backend.database.supabase import get_client, get_authed_client, get_user_from_token
+from backend.database.supabase import get_client, get_authed_client, get_service_client, get_user_from_token
 
 users_bp = Blueprint("users", __name__)
 
@@ -35,19 +35,17 @@ def register():
 
         user_id = auth_response.user.id
 
-        # Use the new user's JWT so auth.uid() resolves correctly in RLS
-        access_token = auth_response.session.access_token if auth_response.session else None
-        authed_db = get_authed_client(access_token) if access_token else db
+        service_db = get_service_client()
 
         # Create user profile
-        authed_db.table("users").insert({
+        service_db.table("users").insert({
             "id": user_id,
             "username": username,
             "email": email,
         }).execute()
 
         # Initialize score
-        authed_db.table("scores").insert({
+        service_db.table("scores").insert({
             "user_id": user_id,
             "total_points": 0,
             "streak": 0,

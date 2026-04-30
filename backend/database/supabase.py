@@ -30,6 +30,14 @@ def get_authed_client(token: str) -> Client:
     return client
 
 
+def get_service_client() -> Client:
+    url = os.getenv("SUPABASE_URL")
+    key = os.getenv("SUPABASE_SECRET_KEY")
+    if not url or not key:
+        raise RuntimeError("SUPABASE_SECRET_KEY not set")
+    return create_client(url, key)
+
+
 def get_user_from_token(token: str):
     """Verify a Supabase JWT and return the user, or None if invalid."""
     try:
