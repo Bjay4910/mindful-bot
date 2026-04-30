@@ -1,7 +1,7 @@
 from flask import Blueprint, request, jsonify
 from backend.database.supabase import get_authed_client, get_user_from_token
 from backend.agents import chatbot, challenger
-from backend.app import limiter
+from backend.limiter import limiter
 
 chat_bp = Blueprint("chat", __name__)
 

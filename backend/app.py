@@ -1,9 +1,8 @@
 import os
 from flask import Flask, jsonify
 from flask_cors import CORS
-from flask_limiter import Limiter
-from flask_limiter.util import get_remote_address
 from dotenv import load_dotenv
+from backend.limiter import limiter
 
 load_dotenv()
 
@@ -13,11 +12,7 @@ app.secret_key = os.getenv("FLASK_SECRET_KEY", "dev-secret")
 # Allow all origins for development
 CORS(app)
 
-limiter = Limiter(
-    get_remote_address,
-    app=app,
-    default_limits=["200 per day", "50 per hour"],
-)
+limiter.init_app(app)
 
 
 @app.errorhandler(429)
