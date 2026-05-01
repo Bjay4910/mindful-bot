@@ -61,13 +61,11 @@ Intelligent Systems course.
 - Continue button on dashboard correctly resumes existing sessions
 - Delete account fully removes both users table row and Supabase Auth record
 
-## What's Pending / Known Issues
-- test suite complete: 39/39 passing (22 functional + 17 security tests)
+## Known Limitations & Conscious Decisions
 - test_rate_limiting.py intentionally empty (rate limiting disabled in test env)
 - Session topic detection adds ~1 extra Claude API call per new session
 - No pagination on leaderboard (renders all users up to limit 20)
-- No mobile-optimised chat keyboard handling
-- Registration: if Supabase has email confirmation enabled, session is null and user is not auto-logged in after register
+- Email confirmation disabled (no custom domain for Resend SMTP)
 
 ---
 
@@ -114,16 +112,16 @@ mindful-bot/
 ├── tests/
 │   ├── __init__.py
 │   ├── conftest.py         # Flask test client, auth_headers, test_user, cleanup fixtures
-│   ├── test_auth.py        # Register + login tests (written)
-│   ├── test_chat.py        # Chat endpoint tests (empty)
-│   ├── test_scores.py      # Scores + leaderboard tests (empty)
-│   ├── test_challenge.py   # Challenge generate + evaluate tests (empty)
+│   ├── test_auth.py        # Register + login tests (written, passing)
+│   ├── test_chat.py        # Chat endpoint tests (written, passing)
+│   ├── test_scores.py      # Scores + leaderboard tests (written, passing)
+│   ├── test_challenge.py   # Challenge generate + evaluate tests (written, passing)
 │   └── security/
 │       ├── __init__.py
-│       ├── test_auth_bypass.py       # Auth bypass attempts (empty)
-│       ├── test_rate_limiting.py     # Rate limit enforcement (empty)
-│       ├── test_input_validation.py  # Input sanitisation (empty)
-│       └── test_rls.py               # RLS policy enforcement (empty)
+│       ├── test_auth_bypass.py       # Auth bypass attempts (written, passing)
+│       ├── test_rate_limiting.py     # Rate limit enforcement (intentionally empty)
+│       ├── test_input_validation.py  # Input sanitisation (written, passing)
+│       └── test_rls.py               # RLS policy enforcement (written, passing)
 ├── supabase_schema.sql     # Full schema + RLS policies
 ├── pytest.ini              # pytest config (testpaths = tests)
 ├── requirements.txt        # Full frozen dependencies
@@ -222,9 +220,10 @@ pytest
 - pytest installed, conftest.py and test_auth.py written — run with: pytest tests/test_auth.py -v
 
 ## Next Steps (in order)
-1. Mobile chat keyboard handling
-2. test_rate_limiting.py — decide if worth implementing
-3. App is otherwise feature complete
+- App is feature complete and fully deployed
+- Future v2: file upload support (PDF/images via Claude API)
+- Future v2: custom domain for email verification
+- Future v2: leaderboard pagination
 
 ## Author
 KingJames — Intelligent Systems Course 2026
