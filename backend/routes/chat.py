@@ -71,7 +71,8 @@ def send_message():
     try:
         response_text = chatbot.chat(message, history)
     except Exception as e:
-        return jsonify({"error": f"AI error: {str(e)}"}), 500
+        print(f"[ERROR] chatbot.chat failed: {e}")
+        return jsonify({"error": "Our AI is temporarily unavailable. Please try again in a moment."}), 500
 
     # Save user message and assistant response
     try:
@@ -150,7 +151,8 @@ def generate_challenge():
     try:
         challenge = challenger.generate_challenge(history)
     except Exception as e:
-        return jsonify({"error": f"Challenge generation failed: {str(e)}"}), 500
+        print(f"[ERROR] challenger.generate_challenge failed: {e}")
+        return jsonify({"error": "Unable to generate a challenge right now. Please try again."}), 500
 
     # Save challenge to DB (answer filled in after evaluation)
     try:
@@ -191,7 +193,8 @@ def evaluate_challenge():
     try:
         result = evaluator.evaluate(question, correct_answer, user_answer)
     except Exception as e:
-        return jsonify({"error": f"Evaluation failed: {str(e)}"}), 500
+        print(f"[ERROR] evaluator.evaluate failed: {e}")
+        return jsonify({"error": "Unable to evaluate your answer right now. Please try again."}), 500
 
     score = result.get("score", 0)
     points_earned = score  # 1 point per score point
@@ -235,6 +238,7 @@ def evaluate_challenge():
         print(f"[INFO] score updated: user={user.id} total={new_total} streak={new_streak} longest={new_longest} challenges={new_challenges}")
     except Exception as e:
         print(f"[ERROR] score upsert failed: {e}")
+        result["points_warning"] = "Your points could not be saved. Please try again later."
 
     result["points_earned"] = points_earned
     return jsonify(result)
