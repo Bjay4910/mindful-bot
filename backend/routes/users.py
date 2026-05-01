@@ -116,3 +116,21 @@ def get_user(user_id):
         return jsonify({"user": result.data[0]})
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
+
+@users_bp.delete("/users/<user_id>")
+def delete_user(user_id):
+    user, token, err = _require_auth()
+    if err:
+        return err
+    if user.id != user_id:
+        return jsonify({"error": "Forbidden"}), 403
+
+    try:
+        service_db = get_service_client()
+        service_db.table("users").delete().eq("id", user_id).execute()
+        service_db.auth.admin.delete_user(user_id)
+        return jsonify({"message": "Account deleted successfully"})
+    except Exception as e:
+        print(f"[ERROR] delete_user failed: {e}")
+        return jsonify({"error": "Could not delete account. Please try again."}), 500

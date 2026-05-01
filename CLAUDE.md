@@ -56,6 +56,8 @@ Intelligent Systems course.
 - 3D bubble canvas animation with depth background
 - Profile dropdown with settings link
 - Friendly error messages for duplicate email/username on registration
+- Friendly error messages for AI/DB failures
+- Score save failure surfaced as points_warning in evaluation response
 
 ## What's Pending / Known Issues
 - test suite complete: 39/39 passing (22 functional + 17 security tests)
@@ -218,9 +220,8 @@ pytest
 - pytest installed, conftest.py and test_auth.py written — run with: pytest tests/test_auth.py -v
 
 ## Next Steps (in order)
-1. Error handling for when AI/DB is down (show user-friendly messages)
-2. Mobile chat keyboard handling
-3. test_rate_limiting.py — decide if worth implementing
+1. Mobile chat keyboard handling
+2. test_rate_limiting.py — decide if worth implementing
 
 ## Author
 KingJames — Intelligent Systems Course 2026

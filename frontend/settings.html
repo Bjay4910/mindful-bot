@@ -575,17 +575,13 @@
                     );
                     if (confirmed !== 'DELETE') return;
 
-                    const { error } = await _supabase
-                        .from('users')
-                        .delete()
-                        .eq('id', userId);
-
-                    if (error) {
-                        showToast(error.message || 'Deletion failed.', 'error');
-                        return;
+                    try {
+                        await apiFetch(`/users/${userId}`, { method: 'DELETE' });
+                        await _supabase.auth.signOut();
+                        window.location.href = 'index.html';
+                    } catch (err) {
+                        showToast(err.message || 'Deletion failed.', 'error');
                     }
-                    await _supabase.auth.signOut();
-                    window.location.href = 'index.html';
                 });
 
             } catch(err) {

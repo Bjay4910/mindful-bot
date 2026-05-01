@@ -19,11 +19,22 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 async function initChat() {
     currentUser = await getCurrentUser();
-    sessionId = generateUUID();
+
+    const urlSessionId = new URLSearchParams(window.location.search).get('session');
+    if (urlSessionId) {
+        sessionId = urlSessionId;
+    } else {
+        sessionId = generateUUID();
+    }
 
     await loadUserScore();
     setupInputHandlers();
-    displayWelcome();
+
+    if (urlSessionId) {
+        await loadSessionHistory();
+    } else {
+        displayWelcome();
+    }
 }
 
 // ── Session UUID ──────────────────────────────────────────────────────────────
@@ -40,6 +51,27 @@ function displayWelcome() {
         "Hi! I'm Mindful, your learning companion. I'm here to help you think deeply — " +
         "not just get quick answers. What topic would you like to explore today?"
     );
+}
+
+// ── Load existing session history ─────────────────────────────────────────────
+async function loadSessionHistory() {
+    try {
+        const data = await apiFetch(`/chat/history?session_id=${sessionId}`);
+        const messages = data.messages || [];
+        if (messages.length === 0) {
+            displayWelcome();
+            return;
+        }
+        for (const msg of messages) {
+            if (msg.role === 'user') {
+                appendUserMessage(msg.content);
+            } else {
+                appendBotMessage(msg.content);
+            }
+        }
+    } catch (err) {
+        displayWelcome();
+    }
 }
 
 // ── Input handlers ────────────────────────────────────────────────────────────
