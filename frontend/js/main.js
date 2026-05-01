@@ -194,6 +194,15 @@ function initHamburgerMenu() {
 
     nav.insertBefore(btn, links);
 
+    // On mobile, move auth button groups into the dropdown so the nav bar
+    // isn't overcrowded — existing show/hide logic in updateNavState() still works
+    if (window.innerWidth <= 768) {
+        ['nav-auth-links', 'nav-user-links'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) links.appendChild(el);
+        });
+    }
+
     btn.addEventListener('click', e => {
         e.stopPropagation();
         nav.classList.toggle('nav-open');
