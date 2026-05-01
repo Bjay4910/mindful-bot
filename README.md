@@ -9,7 +9,11 @@ A cognitive offload resistance chatbot that challenges you to think before revea
 
 ## Screenshots
 
-> *(Add screenshots here)*
+![Landing Page](screenshots/landing.png)
+![Chat Interface](screenshots/chat.png)
+![Dashboard](screenshots/dashboard.png)
+![Leaderboard](screenshots/leaderboard-deepspace.png)
+![Settings](screenshots/settings.png)
 
 ---
 
