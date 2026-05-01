@@ -181,6 +181,31 @@ function initAuthModal() {
     });
 }
 
+// ── Hamburger menu (mobile) ───────────────────────────────────────────────────
+function initHamburgerMenu() {
+    const nav = document.querySelector('.topnav');
+    const links = nav?.querySelector('.topnav-links');
+    if (!nav || !links) return;
+
+    const btn = document.createElement('button');
+    btn.className = 'nav-hamburger';
+    btn.setAttribute('aria-label', 'Toggle menu');
+    btn.innerHTML = '<span></span><span></span><span></span>';
+
+    nav.insertBefore(btn, links);
+
+    btn.addEventListener('click', e => {
+        e.stopPropagation();
+        nav.classList.toggle('nav-open');
+    });
+
+    links.addEventListener('click', () => nav.classList.remove('nav-open'));
+
+    document.addEventListener('click', e => {
+        if (!nav.contains(e.target)) nav.classList.remove('nav-open');
+    });
+}
+
 // ── Navbar scroll shrink ─────────────────────────────────────────────────────
 function initNavScroll() {
     const nav = document.querySelector('.topnav');
@@ -244,6 +269,7 @@ document.addEventListener('DOMContentLoaded', () => {
     updateNavState();
     initAuthModal();
     initNavScroll();
+    initHamburgerMenu();
     initPasswordToggles();
 
     // Logout button

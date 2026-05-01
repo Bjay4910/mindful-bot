@@ -235,10 +235,58 @@
 /* ============================================================
    RESPONSIVE
    ============================================================ */
+/* Hamburger button — hidden on desktop */
+.nav-hamburger {
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    gap: 5px;
+    width: 36px;
+    height: 36px;
+    padding: 6px;
+    background: none;
+    border: none;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    margin-left: auto;
+    color: var(--color-text);
+}
+.nav-hamburger:hover { background: var(--color-bg-secondary); }
+.nav-hamburger span {
+    display: block;
+    height: 2px;
+    background: currentColor;
+    border-radius: 2px;
+    transition: transform 0.2s, opacity 0.2s;
+}
+.topnav.nav-open .nav-hamburger span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.topnav.nav-open .nav-hamburger span:nth-child(2) { opacity: 0; }
+.topnav.nav-open .nav-hamburger span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
 @media (max-width: 640px) {
     h1 { font-size: 1.875rem; }
     h2 { font-size: 1.5rem; }
     .hero { padding: 48px 16px 40px; }
     .section { padding: 40px 16px; }
-    .topnav-links { display: none; }
+
+    .nav-hamburger { display: flex; }
+    .topnav { position: relative; }
+    .topnav-links {
+        display: none;
+        position: absolute;
+        top: var(--topbar-height);
+        left: 0;
+        right: 0;
+        flex-direction: column;
+        align-items: stretch;
+        background: var(--color-bg);
+        border-bottom: 1px solid var(--color-border);
+        padding: 8px 16px 12px;
+        gap: 2px;
+        z-index: 99;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        margin-left: 0;
+    }
+    .topnav.nav-open .topnav-links { display: flex; }
+    .topnav-links a { padding: 10px 12px; font-size: 0.95rem; }
 }
