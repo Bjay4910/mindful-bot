@@ -269,6 +269,9 @@
     .hero { padding: 48px 16px 40px; }
     .section { padding: 40px 16px; }
 
+    .cta-section  { padding: 48px 16px; }
+    .how-it-works { padding: 40px 16px; }
+
     .nav-hamburger { display: flex; }
     .topnav { position: relative; }
     .topnav-links {
