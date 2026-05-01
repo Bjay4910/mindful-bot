@@ -299,4 +299,8 @@
         gap: 8px;
         flex-wrap: wrap;
     }
+    html, body {
+        overflow-x: hidden;
+        height: auto;
+    }
 }
