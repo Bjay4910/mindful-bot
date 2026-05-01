@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify
-from backend.database.supabase import get_authed_client, get_user_from_token
+from backend.database.supabase import get_authed_client, get_user_from_token, get_service_client
 from backend.agents import chatbot, challenger
 from backend.limiter import limiter
 
@@ -87,9 +87,28 @@ def send_message():
     # Using history avoids a separate DB query and is immune to count query failures.
     prior_user_msgs = sum(1 for m in history if m["role"] == "user")
     exchange_count = prior_user_msgs + 1
-    should_challenge = (exchange_count % CHALLENGE_EVERY == 0)
 
-    print(f"[DEBUG] history_len={len(history)} prior_user_msgs={prior_user_msgs} exchange_count={exchange_count} CHALLENGE_EVERY={CHALLENGE_EVERY} should_challenge={should_challenge}")
+    # Detect and save topic on first message
+    if exchange_count == 1:
+        try:
+            from backend.agents.chatbot import _get_client as _get_anthropic_client
+            _claude = _get_anthropic_client()
+            topic_response = _claude.messages.create(
+                model="claude-sonnet-4-6",
+                max_tokens=16,
+                messages=[{
+                    "role": "user",
+                    "content": f"What is the topic of this message in 3 words or less? Reply with only the topic, no punctuation: {message}"
+                }],
+            )
+            topic = topic_response.content[0].text.strip()
+            get_service_client().table("sessions").update(
+                {"topic": topic}
+            ).eq("id", session_id).execute()
+            print(f"[INFO] session topic set: '{topic}' for session {session_id}")
+        except Exception as e:
+            print(f"[ERROR] topic detection failed: {e}")
+    should_challenge = (exchange_count % CHALLENGE_EVERY == 0)
 
     return jsonify({
         "response": response_text,
