@@ -58,6 +58,8 @@ Intelligent Systems course.
 - Friendly error messages for duplicate email/username on registration
 - Friendly error messages for AI/DB failures
 - Score save failure surfaced as points_warning in evaluation response
+- Continue button on dashboard correctly resumes existing sessions
+- Delete account fully removes both users table row and Supabase Auth record
 
 ## What's Pending / Known Issues
 - test suite complete: 39/39 passing (22 functional + 17 security tests)
@@ -222,6 +224,7 @@ pytest
 ## Next Steps (in order)
 1. Mobile chat keyboard handling
 2. test_rate_limiting.py — decide if worth implementing
+3. App is otherwise feature complete
 
 ## Author
 KingJames — Intelligent Systems Course 2026

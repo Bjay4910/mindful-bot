@@ -1,87 +1,112 @@
-# mindful-bot 🧠
+# mindful-bot
 
-> A cognitive offload resistance chatbot that challenges you to think before getting answers.
+A cognitive offload resistance chatbot that challenges you to think before revealing answers. Built with a Socratic AI that guides learning through active recall rather than passive consumption.
 
-## Overview
-
-mindful-bot is an AI-powered learning tool that uses the Socratic method to prevent cognitive offload — the tendency to outsource thinking to AI instead of engaging with problems directly. Rather than providing answers on demand, it guides users to reason through questions first, then tests retention with timed recall challenges, and rewards active thinking with a points-based leaderboard system. Built as a full-stack web application for an Intelligent Systems course.
+**Live demo:** [mindful-bot-three.vercel.app](https://mindful-bot-three.vercel.app)
+**API:** [mindful-bot.onrender.com](https://mindful-bot.onrender.com)
 
 ---
 
-## Live Demo
+## Screenshots
 
-[Add deployment URL here]
+> *(Add screenshots here)*
 
 ---
 
 ## Features
 
-- **Socratic AI Chatbot** (Claude claude-sonnet-4-6) — never gives answers directly; guides thinking with Socratic questions before revealing anything
-- **Recall Challenge System** — triggers automatically every 3 exchanges, scored 0–10 points by an AI evaluator agent
-- **Points & Streak Tracking** — real-time scoring saved to database after every evaluated challenge
-- **Global Leaderboard** — all users ranked by total recall points via a live Supabase view
-- **Progress Dashboard** — personal stats including total points, streak, global rank, and recent sessions
-- **User Authentication** — register, login, and email confirmation via Supabase Auth
-- **Settings Page** — update username, email, password, or permanently delete account
-- **3 AI Agents** — independent Socratic chatbot, challenge generator, and evaluator with separate system prompts
-- **Theme Switcher** — Light, Dark, and Deep Space modes persisted in localStorage
-- **3D Animations** — animated water bubble canvas with depth background, glassmorphism cards, and scroll reveal effects
-- **Profile Dropdown** — avatar initial, quick navigation links, and sign out
-- **Responsive Design** — works on desktop and mobile
+- **Socratic AI** — never gives direct answers; prompts recall and reflection first
+- **Recall challenges** — triggered every 3 exchanges, scored 0–10 by an evaluator agent
+- **Points & streaks** — earn points for correct recall, track streaks across sessions
+- **Global leaderboard** — ranked by total points, updated in real time
+- **Progress dashboard** — view score, streak, rank, and recent session topics
+- **Session topic detection** — each conversation is automatically labelled by topic
+- **Account management** — register, login, update username/email/password, delete account
+- **Theme switcher** — Light, Dark, and Deep Space modes
 
 ---
 
 ## Tech Stack
 
-### Frontend
-- HTML, CSS, Vanilla JavaScript
-- Supabase JS Client (auth + direct DB queries for sessions and leaderboard)
-- AOS (Animate On Scroll)
-- Canvas API for animated bubble + depth background effects
-- Custom CSS glassmorphism, 3D tilt cards, and scroll reveal
-
-### Backend
-- Python Flask (REST API on port 5001)
-- Anthropic Claude API (`claude-sonnet-4-6`)
-  - **Agent 1:** Socratic chatbot — warm, Socratic system prompt; never answers directly
-  - **Agent 2:** Recall challenge generator — produces targeted questions from conversation context
-  - **Agent 3:** Challenge evaluator — scores 0–10, gives feedback, returns structured JSON
-- Supabase Python client with per-request JWT authentication
-
-### Database
-- Supabase (PostgreSQL)
-- Tables: `users`, `sessions`, `messages`, `challenges`, `scores`
-- Row Level Security (RLS) on all tables — `auth.uid()` policies enforce user data isolation
-- `leaderboard` view with `RANK() OVER` for real-time global rankings
-
-### Auth
-- Supabase Auth (email + password)
-- JWT tokens passed from frontend → Flask → Supabase PostgREST for all authenticated DB operations
-
----
-
-## Database Schema
-
-| Table | Key Columns |
+| Layer | Technology |
 |---|---|
-| `users` | `id`, `username`, `email`, `created_at` |
-| `sessions` | `id`, `user_id`, `topic`, `started_at` |
-| `messages` | `id`, `session_id`, `role`, `content`, `created_at` |
-| `challenges` | `id`, `session_id`, `question`, `user_answer`, `correct_answer`, `correct`, `score` |
-| `scores` | `id`, `user_id`, `total_points`, `streak`, `longest_streak`, `challenges_completed`, `updated_at` |
-| `leaderboard` | View: `username`, `total_points`, `streak`, `rank` |
-
-RLS is enabled on all tables. Users can only read and write their own data. The `leaderboard` view is publicly readable with no RLS.
+| Frontend | HTML, CSS, Vanilla JavaScript |
+| Animations | AOS (Animate On Scroll) + CSS |
+| Backend | Python, Flask, Gunicorn |
+| Database | Supabase (PostgreSQL) |
+| Auth | Supabase Auth (JWT) |
+| AI | Anthropic Claude API (`claude-sonnet-4-6`) |
+| Rate Limiting | flask-limiter |
+| Testing | pytest |
+| Hosting | Vercel (frontend), Render (backend) |
 
 ---
 
-## Security
+## Local Setup
 
-- Row Level Security (RLS) on all Supabase tables with `auth.uid() = user_id` policies
-- JWT token passed from frontend → Flask → Supabase PostgREST via `client.postgrest.auth(token)` so `auth.uid()` resolves correctly on every request
-- Password hashing handled entirely by Supabase Auth
-- Input validation on all form fields (frontend and backend)
-- Environment variables for all secrets — never committed to version control
+### 1. Clone the repo
+
+```bash
+git clone https://github.com/your-username/mindful-bot.git
+cd mindful-bot
+```
+
+### 2. Create a virtual environment and install dependencies
+
+```bash
+python -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+```
+
+### 3. Set up environment variables
+
+Create a `.env` file in the project root:
+
+```
+SUPABASE_URL=
+SUPABASE_KEY=
+SUPABASE_SECRET_KEY=
+CLAUDE_API_KEY=
+FLASK_SECRET_KEY=
+FLASK_ENV=development
+```
+
+See [Environment Variables](#environment-variables) for details on each.
+
+### 4. Run the backend
+
+```bash
+python -m backend.app
+# API available at http://localhost:5001
+```
+
+### 5. Open the frontend
+
+Open `frontend/index.html` with Live Server in VSCode (runs on port 5500).
+
+---
+
+## Environment Variables
+
+| Variable | Description |
+|---|---|
+| `SUPABASE_URL` | Your Supabase project URL |
+| `SUPABASE_KEY` | Supabase anon/publishable key |
+| `SUPABASE_SECRET_KEY` | Supabase service role key (legacy JWT format, from Legacy API tab) |
+| `CLAUDE_API_KEY` | Anthropic API key |
+| `FLASK_SECRET_KEY` | Random secret for Flask sessions |
+| `FLASK_ENV` | `development` or `production` |
+
+---
+
+## Running Tests
+
+```bash
+pytest
+```
+
+Tests are in `tests/` and require a live Supabase connection. A unique test user is created and deleted automatically each run.
 
 ---
 
@@ -89,132 +114,35 @@ RLS is enabled on all tables. Users can only read and write their own data. The 
 
 ```
 mindful-bot/
-├── frontend/
-│   ├── index.html        # Landing page with 3D animations
-│   ├── chat.html         # Main chat interface
-│   ├── dashboard.html    # User progress dashboard
-│   ├── leaderboard.html  # Global rankings
-│   ├── settings.html     # Account settings
-│   ├── css/
-│   │   └── main.css      # Design system + components
-│   └── js/
-│       ├── config.js     # Supabase + API config
-│       ├── main.js       # Shared auth + utilities
-│       ├── chat.js       # Chat + challenge logic
-│       ├── dashboard.js  # Dashboard data fetching
-│       └── leaderboard.js# Leaderboard rendering
+├── frontend/           # Static HTML/CSS/JS frontend
+│   ├── js/
+│   │   ├── config.js   # Dynamic API base URL
+│   │   ├── main.js     # Auth, shared utilities
+│   │   ├── chat.js     # Chat + challenge flow
+│   │   ├── dashboard.js
+│   │   └── leaderboard.js
+│   └── css/
 ├── backend/
-│   ├── app.py            # Flask app entry point
+│   ├── app.py          # Flask entry point
+│   ├── limiter.py      # Rate limiter instance
 │   ├── agents/
-│   │   ├── chatbot.py    # Socratic chatbot agent
-│   │   ├── challenger.py # Recall challenge generator
-│   │   └── evaluator.py  # Challenge evaluator + scorer
+│   │   ├── chatbot.py      # Socratic AI (Agent 1)
+│   │   ├── challenger.py   # Recall challenge generator (Agent 2)
+│   │   └── evaluator.py    # Answer evaluator (Agent 3)
 │   ├── routes/
-│   │   ├── chat.py       # Chat, challenge, evaluate endpoints
-│   │   ├── users.py      # User profile endpoints
-│   │   └── scores.py     # Score + leaderboard endpoints
+│   │   ├── chat.py     # /api/chat, /api/challenge
+│   │   ├── scores.py   # /api/scores, /api/leaderboard
+│   │   └── users.py    # /api/users
 │   └── database/
-│       └── supabase.py   # Supabase client + authed client
-├── supabase_schema.sql   # Full schema + RLS policies
+│       └── supabase.py
+├── tests/
+├── supabase_schema.sql
 ├── requirements.txt
-├── .env                  # Environment variables (not committed)
-└── README.md
+└── .env
 ```
-
----
-
-## Setup & Installation
-
-### Prerequisites
-
-- Python 3.10+
-- A [Supabase](https://supabase.com) project with the schema applied
-- An [Anthropic](https://console.anthropic.com) API key
-
-### Environment Variables
-
-Create a `.env` file in the project root:
-
-```env
-SUPABASE_URL=your_supabase_project_url
-SUPABASE_KEY=your_supabase_anon_key
-CLAUDE_API_KEY=your_anthropic_api_key
-FLASK_SECRET_KEY=any_random_secret_string
-FLASK_ENV=development
-```
-
-### Running Locally
-
-```bash
-# 1. Clone the repository
-git clone https://github.com/your-username/mindful-bot.git
-cd mindful-bot
-
-# 2. Create and activate virtual environment
-python -m venv .venv
-source .venv/bin/activate        # Mac/Linux
-# .venv\Scripts\activate         # Windows
-
-# 3. Install dependencies
-pip install -r requirements.txt
-
-# 4. Apply database schema
-# Open Supabase dashboard → SQL Editor → run supabase_schema.sql
-
-# 5. Start Flask backend
-python -m backend.app
-# API available at http://localhost:5001
-
-# 6. Open frontend
-# Open frontend/index.html with Live Server in VS Code (port 5500)
-```
-
----
-
-## API Endpoints
-
-| Method | Endpoint | Auth | Description |
-|---|---|---|---|
-| `POST` | `/api/users/register` | No | Create new account |
-| `POST` | `/api/users/login` | No | Authenticate, get JWT |
-| `GET` | `/api/users/<user_id>` | Yes | Get user profile |
-| `POST` | `/api/chat` | Yes | Send message, get Socratic response |
-| `GET` | `/api/chat/history` | Yes | Fetch session message history |
-| `POST` | `/api/challenge` | Yes | Generate recall challenge from conversation |
-| `POST` | `/api/challenge/evaluate` | Yes | Evaluate answer, update scores |
-| `GET` | `/api/scores/<user_id>` | Yes | Get user points, streak, and rank |
-| `GET` | `/api/leaderboard` | No | Get global leaderboard |
-
-All protected routes require `Authorization: Bearer <token>` header.
-
----
-
-## Testing
-
-- RLS policies verified on all tables — queries fail correctly without valid JWT
-- JWT authentication enforced on all protected routes
-- Challenge triggers confirmed at every 3rd user exchange
-- Score calculation, streak increment, and longest streak tracking verified
-- Settings CRUD operations tested (username, email, password, delete)
-- Cross-theme rendering verified (Light / Dark / Deep Space)
-- Auth guard on protected pages (chat, dashboard, settings, leaderboard)
-
----
-
-## Known Limitations
-
-- Sessions all show "General conversation" as topic — automatic topic detection not yet implemented
-- No pagination on leaderboard — renders all users
-- No mobile-optimised chat keyboard handling
 
 ---
 
 ## Author
 
 KingJames — Intelligent Systems Course 2026
-
----
-
-## License
-
-MIT
