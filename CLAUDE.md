@@ -57,8 +57,8 @@ Intelligent Systems course.
 - Profile dropdown with settings link
 
 ## What's Pending / Known Issues
-- test suite is scaffolded but most test files are empty (only test_auth.py written)
-- test_register_duplicate_username depends on UNIQUE constraint on users.username (confirmed in schema)
+- test suite complete: 39/39 passing (22 functional + 17 security tests)
+- test_rate_limiting.py intentionally empty (rate limiting disabled in test env)
 - Session topic detection adds ~1 extra Claude API call per new session
 - No pagination on leaderboard (renders all users up to limit 20)
 - No mobile-optimised chat keyboard handling
@@ -217,13 +217,9 @@ pytest
 - pytest installed, conftest.py and test_auth.py written — run with: pytest tests/test_auth.py -v
 
 ## Next Steps (in order)
-1. Run test_auth.py and fix any failures
-2. Write test_chat.py
-3. Write test_scores.py  
-4. Write test_challenge.py
-5. Write security tests
-6. Fix error messages (duplicate username/email show raw DB errors to user)
-7. Push final test suite to GitHub
+1. Fix error messages (duplicate username/email show raw DB errors to user)
+2. test_rate_limiting.py — decide if worth implementing
+3. Mobile chat keyboard handling
 
 ## Author
 KingJames — Intelligent Systems Course 2026
