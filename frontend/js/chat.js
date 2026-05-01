@@ -29,6 +29,7 @@ async function initChat() {
 
     await loadUserScore();
     setupInputHandlers();
+    initMobileKeyboardHandling();
 
     if (urlSessionId) {
         await loadSessionHistory();
@@ -71,6 +72,24 @@ async function loadSessionHistory() {
         }
     } catch (err) {
         displayWelcome();
+    }
+}
+
+// ── Mobile keyboard handling ──────────────────────────────────────────────────
+function initMobileKeyboardHandling() {
+    const input = document.getElementById('chat-input');
+    if (!input) return;
+
+    // On focus, scroll chat to bottom so latest message stays visible
+    input.addEventListener('focus', () => {
+        if (window.innerWidth <= 768) {
+            setTimeout(scrollToBottom, 300);
+        }
+    });
+
+    // visualViewport fires when soft keyboard opens/closes
+    if (window.visualViewport) {
+        window.visualViewport.addEventListener('resize', scrollToBottom);
     }
 }
 
