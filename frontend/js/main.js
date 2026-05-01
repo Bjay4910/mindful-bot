@@ -210,12 +210,41 @@ function countUp(el, target, duration = 900) {
     requestAnimationFrame(step);
 }
 
+// ── Password visibility toggle ────────────────────────────────────────────────
+function initPasswordToggles() {
+    document.querySelectorAll('input[type="password"]').forEach(input => {
+        const wrapper = document.createElement('div');
+        wrapper.style.cssText = 'position:relative; display:block;';
+        input.parentNode.insertBefore(wrapper, input);
+        wrapper.appendChild(input);
+
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.textContent = '👁';
+        btn.style.cssText =
+            'position:absolute; right:10px; top:50%; transform:translateY(-50%);' +
+            'background:none; border:none; cursor:pointer; font-size:1rem;' +
+            'color:var(--color-text-secondary); padding:0; line-height:1;';
+        btn.setAttribute('aria-label', 'Toggle password visibility');
+        wrapper.appendChild(btn);
+
+        input.style.paddingRight = '36px';
+
+        btn.addEventListener('click', () => {
+            const isPassword = input.type === 'password';
+            input.type = isPassword ? 'text' : 'password';
+            btn.textContent = isPassword ? '🙈' : '👁';
+        });
+    });
+}
+
 // ── Init on DOM ready ─────────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
     AOS.init({ duration: 600, once: true, offset: 40 });
     updateNavState();
     initAuthModal();
     initNavScroll();
+    initPasswordToggles();
 
     // Logout button
     document.getElementById('logout-btn')?.addEventListener('click', async e => {
