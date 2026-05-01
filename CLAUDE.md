@@ -1,32 +1,9 @@
-Great questions! Let me address the animations point first:
-
----
-
-**Animations don't require Next.js.** The YouTube video used Next.js probably because it's popular for modern web apps. But animations can be done beautifully with:
-
-```
-Plain HTML/CSS → CSS animations, transitions
-JavaScript     → Vanilla JS animations
-GSAP library   → Professional animations (free)
-AOS library    → Animate On Scroll (free)
-```
-
-**We'll use AOS + CSS animations** — gives us everything we need without the complexity of Next.js.
-
----
-
-**Now here's your complete CLAUDE.md file:**
-
----
-
-```markdown
 # mindful-bot — CLAUDE.md
 
 ## Project Overview
-mindful-bot is a cognitive offload resistance 
-chatbot. It challenges users to think and recall 
-before revealing answers. Built as a full-stack 
-web application for an Intelligent Systems course.
+mindful-bot is a cognitive offload resistance chatbot. It challenges users to think
+and recall before revealing answers. Built as a full-stack web application for an
+Intelligent Systems course.
 
 ---
 
@@ -38,231 +15,215 @@ web application for an Intelligent Systems course.
 
 ---
 
+## Live URLs
+- Frontend: https://mindful-bot-three.vercel.app (Vercel)
+- Backend API: https://mindful-bot.onrender.com (Render)
+- Local frontend: http://localhost:5500 (Live Server)
+- Local backend: http://localhost:5001
+
+---
+
 ## Tech Stack
-- Frontend: Plain HTML, CSS, JavaScript
+- Frontend: Plain HTML, CSS, Vanilla JavaScript
 - Animations: AOS (Animate On Scroll) + CSS
-- Backend: Python Flask
+- Backend: Python Flask + Gunicorn
 - Database: Supabase (PostgreSQL)
-- AI: Claude API (claude-sonnet-4-6)
-- Auth: Supabase Auth
+- AI: Anthropic Claude API (claude-sonnet-4-6)
+- Auth: Supabase Auth (email + password, JWT)
+- Rate Limiting: flask-limiter (200/day, 50/hr global; 30/hr chat, 20/hr challenges)
+- Testing: pytest
+
+---
+
+## What's Fully Working
+- User registration and login (Supabase Auth + JWT)
+- Socratic chatbot (Agent 1) — never answers directly, prompts recall first
+- Recall challenge system (Agent 2) — triggers every 3 exchanges
+- Challenge evaluator (Agent 3) — scores 0–10, gives feedback
+- Points, streak, and longest_streak tracking after every evaluated challenge
+- Global leaderboard (Supabase RANK() view, top 20)
+- Progress dashboard (score, streak, rank, recent sessions)
+- Session topic auto-detection on first message (lightweight Claude call)
+- Settings page (update username, email, password, delete account)
+- Auth guard on all protected pages
+- CORS restricted to known frontend origins
+- RLS enforced on all tables via per-request JWT (get_authed_client)
+- Service role client (get_service_client) for registration inserts that bypass RLS
+- Rate limiting on all AI routes
+- Circular import resolved (limiter.py isolated from app.py)
+- Dynamic API base URL (localhost vs production via window.location.hostname)
+- Theme switcher (Light / Dark / Deep Space)
+- 3D bubble canvas animation with depth background
+- Profile dropdown with settings link
+
+## What's Pending / Known Issues
+- test suite is scaffolded but most test files are empty (only test_auth.py written)
+- test_register_duplicate_username depends on UNIQUE constraint on users.username (confirmed in schema)
+- Session topic detection adds ~1 extra Claude API call per new session
+- No pagination on leaderboard (renders all users up to limit 20)
+- No mobile-optimised chat keyboard handling
+- Registration: if Supabase has email confirmation enabled, session is null and user is not auto-logged in after register
 
 ---
 
 ## Project Structure
+
 ```
 mindful-bot/
 ├── frontend/
-│   ├── index.html          # Landing/Home page
-│   ├── chat.html           # Main chat page
-│   ├── dashboard.html      # User dashboard
-│   ├── leaderboard.html    # Leaderboard page
+│   ├── index.html          # Landing page
+│   ├── chat.html           # Chat interface
+│   ├── dashboard.html      # User progress dashboard
+│   ├── leaderboard.html    # Global rankings
+│   ├── settings.html       # Account settings
 │   ├── features.html       # Features page
 │   ├── about.html          # About page
 │   ├── privacy.html        # Privacy policy
 │   ├── terms.html          # Terms of service
 │   ├── contact.html        # Contact page
 │   ├── css/
-│   │   ├── notion.css      # Notion design system
-│   │   ├── animations.css  # AOS + custom animations
-│   │   └── main.css        # Global styles
+│   │   ├── main.css        # Design system + all components
+│   │   └── notion.css      # Notion-inspired base styles
 │   └── js/
-│       ├── main.js         # Global JS
-│       ├── chat.js         # Chat functionality
-│       ├── dashboard.js    # Dashboard data
-│       └── leaderboard.js  # Leaderboard data
+│       ├── config.js       # Supabase + API config (dynamic base URL)
+│       ├── main.js         # Shared auth, nav, toast, apiFetch
+│       ├── chat.js         # Chat + challenge flow
+│       ├── dashboard.js    # Dashboard data fetching
+│       └── leaderboard.js  # Leaderboard rendering
 ├── backend/
-│   ├── app.py              # Flask entry point
+│   ├── app.py              # Flask entry point, CORS, rate limiter init
+│   ├── limiter.py          # Isolated Limiter instance (avoids circular import)
 │   ├── agents/
-│   │   ├── chatbot.py      # Main chatbot agent
-│   │   ├── challenger.py   # Recall challenge agent
-│   │   └── evaluator.py    # Answer evaluator agent
+│   │   ├── __init__.py
+│   │   ├── chatbot.py      # Socratic chatbot (Agent 1)
+│   │   ├── challenger.py   # Recall challenge generator (Agent 2)
+│   │   └── evaluator.py    # Challenge evaluator + scorer (Agent 3)
 │   ├── routes/
-│   │   ├── chat.py         # Chat API routes
-│   │   ├── scores.py       # Score API routes
-│   │   └── users.py        # User API routes
+│   │   ├── __init__.py
+│   │   ├── chat.py         # /api/chat, /api/challenge, /api/challenge/evaluate
+│   │   ├── scores.py       # /api/scores, /api/leaderboard
+│   │   └── users.py        # /api/users/register, login, profile
 │   └── database/
-│       └── supabase.py     # Supabase connection
-├── .env                    # Secret keys (never share)
-├── .gitignore              # Hides .env from GitHub
-├── requirements.txt        # Python dependencies
+│       ├── __init__.py
+│       └── supabase.py     # get_client, get_authed_client, get_service_client, get_user_from_token
+├── tests/
+│   ├── __init__.py
+│   ├── conftest.py         # Flask test client, auth_headers, test_user, cleanup fixtures
+│   ├── test_auth.py        # Register + login tests (written)
+│   ├── test_chat.py        # Chat endpoint tests (empty)
+│   ├── test_scores.py      # Scores + leaderboard tests (empty)
+│   ├── test_challenge.py   # Challenge generate + evaluate tests (empty)
+│   └── security/
+│       ├── __init__.py
+│       ├── test_auth_bypass.py       # Auth bypass attempts (empty)
+│       ├── test_rate_limiting.py     # Rate limit enforcement (empty)
+│       ├── test_input_validation.py  # Input sanitisation (empty)
+│       └── test_rls.py               # RLS policy enforcement (empty)
+├── supabase_schema.sql     # Full schema + RLS policies
+├── pytest.ini              # pytest config (testpaths = tests)
+├── requirements.txt        # Full frozen dependencies
+├── .env                    # Secret keys (never commit)
+├── .gitignore
 └── CLAUDE.md               # This file
 ```
 
 ---
 
-## The Three AI Agents
+## Database Schema
 
-### Agent 1 — Main Chatbot
-- Handles normal conversation
-- Uses Socratic method
-- Never gives direct answers immediately
-- Always prompts recall first
-- System prompt: warm, intellectual, challenging
+| Table | Key Columns |
+|---|---|
+| `users` | `id uuid PK`, `username text UNIQUE NOT NULL`, `email text`, `created_at` |
+| `sessions` | `id uuid PK`, `user_id uuid FK`, `topic text`, `started_at` |
+| `messages` | `id uuid PK`, `session_id uuid FK`, `role text`, `content text`, `created_at` |
+| `challenges` | `id uuid PK`, `session_id uuid FK`, `question text`, `user_answer text`, `correct_answer text`, `correct bool`, `score int` |
+| `scores` | `id uuid PK`, `user_id uuid FK`, `total_points int`, `streak int`, `longest_streak int`, `challenges_completed int`, `updated_at` |
+| `leaderboard` | View: `username`, `total_points`, `streak`, `rank` |
 
-### Agent 2 — Recall Challenge Generator
-- Triggers after every 2-3 exchanges
-- Generates a specific recall question
-- Based on the current conversation topic
-- Returns structured JSON with question + answer
-
-### Agent 3 — Evaluator Agent
-- Scores user's recall answers
-- Scale: 0-10 points
-- Neither too strict nor too generous
-- Gives constructive feedback
-- Returns JSON: score, feedback, correct_answer
+RLS enabled on all tables. Users can only read/write their own data.
+`leaderboard` view is publicly readable (no RLS).
 
 ---
 
-## Supabase Tables
+## Supabase Client Pattern
 
-### users
-```
-id          uuid primary key
-username    text
-email       text
-created_at  timestamp
-```
-
-### sessions
-```
-id          uuid primary key
-user_id     uuid references users
-topic       text
-started_at  timestamp
-```
-
-### messages
-```
-id          uuid primary key
-session_id  uuid references sessions
-role        text (user/assistant)
-content     text
-created_at  timestamp
-```
-
-### challenges
-```
-id            uuid primary key
-session_id    uuid references sessions
-question      text
-user_answer   text
-correct       boolean
-score         integer
-created_at    timestamp
-```
-
-### scores
-```
-id            uuid primary key
-user_id       uuid references users
-total_points  integer
-streak        integer
-updated_at    timestamp
-```
+Three client types are used:
+- `get_client()` — anon key, for auth API calls (sign_up, sign_in)
+- `get_authed_client(token)` — anon key + user JWT via `postgrest.auth(token)`, for all RLS-protected DB ops
+- `get_service_client()` — service role key (`SUPABASE_SECRET_KEY`), for registration inserts that run before user has a session
 
 ---
 
 ## API Routes
 
-### Chat
-- POST /api/chat → send message, get response
-- GET /api/chat/history → get chat history
-
-### Challenges
-- POST /api/challenge → generate recall challenge
-- POST /api/challenge/evaluate → evaluate answer
-
-### Scores
-- GET /api/scores/:user_id → get user score
-- POST /api/scores/update → update score
-
-### Users
-- POST /api/users/register → create account
-- POST /api/users/login → login
-- GET /api/users/:id → get user profile
+| Method | Route | Auth | Description |
+|---|---|---|---|
+| POST | `/api/users/register` | No | Register new account |
+| POST | `/api/users/login` | No | Login, get JWT |
+| GET | `/api/users/<user_id>` | Yes | Get user profile |
+| POST | `/api/chat` | Yes | Send message, get Socratic response (30/hr) |
+| GET | `/api/chat/history` | Yes | Fetch session history |
+| POST | `/api/challenge` | Yes | Generate recall challenge (20/hr) |
+| POST | `/api/challenge/evaluate` | Yes | Evaluate answer, update scores (20/hr) |
+| GET | `/api/scores/<user_id>` | Yes | Get points, streak, rank |
+| GET | `/api/leaderboard` | No | Global leaderboard (top 20) |
+| GET | `/api/health` | No | Health check |
 
 ---
 
-## Design System
-- Based on Notion design system
-- Primary color: #0075de (Notion Blue)
-- Background: #ffffff and #f6f5f4
-- Text: rgba(0,0,0,0.95)
-- Secondary text: #615d59
-- Borders: 1px solid rgba(0,0,0,0.1)
-- Font: Inter
-- Radius: 4px buttons, 12px cards
+## Environment Variables
 
-## Animations (AOS Library)
-- Page load: fade-up on hero sections
-- Cards: fade-up with stagger delay
-- Sidebar items: fade-right
-- Chat bubbles: fade-in on appearance
-- Score updates: pulse animation
-- Challenge card: slide-up
+```
+SUPABASE_URL
+SUPABASE_KEY           # anon/publishable key
+SUPABASE_SECRET_KEY    # service role key (for registration inserts)
+CLAUDE_API_KEY
+FLASK_SECRET_KEY
+FLASK_ENV
+```
+
+---
+
+## Running Locally
+
+```bash
+# Backend
+source .venv/bin/activate
+python -m backend.app
+# API available at http://localhost:5001
+
+# Frontend
+# Open frontend/index.html with Live Server in VSCode (port 5500)
+
+# Tests
+pytest
+```
 
 ---
 
 ## Development Rules
 
-### Rule 1: Always read first
-Before taking any action always read:
-- CLAUDE.md
-- project_specs.md
+1. Always use `get_authed_client(token)` for DB ops inside authenticated routes
+2. Never hardcode secrets — use .env
+3. Never expose API keys in error responses
+4. Every external call (Supabase, Claude API) must be wrapped in try/except
+5. Rate limiting decorators go on every AI-calling route
+6. The `limiter` object lives in `backend/limiter.py` — never import it from `app.py`
 
-### Rule 2: Never use dummy data
-- All data comes from Supabase
-- All AI responses come from Claude API
-- No hardcoded fake responses
+---## Key Decisions Made
+- Email confirmation DISABLED in Supabase (no custom domain for Resend SMTP)
+- Using legacy Supabase JWT keys (eyJ... format) NOT the new sb_secret_... format
+- SUPABASE_SECRET_KEY must be the legacy service_role JWT from the Legacy tab in Supabase
+- pytest installed, conftest.py and test_auth.py written — run with: pytest tests/test_auth.py -v
 
-### Rule 3: One file, one job
-- Each file does one specific thing
-- Keep files under 200 lines where possible
-- Split logic into separate modules
+## Next Steps (in order)
+1. Run test_auth.py and fix any failures
+2. Write test_chat.py
+3. Write test_scores.py  
+4. Write test_challenge.py
+5. Write security tests
+6. Fix error messages (duplicate username/email show raw DB errors to user)
+7. Push final test suite to GitHub
 
-### Rule 4: Environment variables
-- Never hardcode API keys
-- Always use .env file
-- Always check .gitignore includes .env
-
-### Rule 5: Error handling
-- Every API call must have try/catch
-- Always return proper error messages
-- Never expose API keys in error messages
-
----
-
-## Environment Variables needed
-```
-CLAUDE_API_KEY=sk-ant-...
-SUPABASE_URL=https://your-project.supabase.co
-SUPABASE_ANON_KEY=your-supabase-anon-key
-FLASK_SECRET_KEY=your-random-secret-key
-FLASK_ENV=development
-```
-
----
-
-## Running the project
-```
-# Backend
-cd backend
-pip install -r requirements.txt
-python app.py
-
-# Frontend
-Open index.html in browser
-Or use Live Server in VSCode
-```
-
----
-
-## Important Notes
-- Contact: gyampoh.b.james@gmail.com
-- The hardest part is prompt engineering 
-  the three agents correctly
-```
-
----
-
+## Author
+KingJames — Intelligent Systems Course 2026
