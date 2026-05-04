@@ -64,8 +64,9 @@ def register():
             "message": "Registration successful. Check your email to confirm your account.",
         })
     except Exception as e:
-        print(f"[DEBUG] registration error: {repr(e)}")
         err_str = str(e)
+        if "User already registered" in err_str or "already registered" in err_str.lower():
+            return jsonify({"error": "An account with this email already exists"}), 400
         if "users_email_key" in err_str:
             return jsonify({"error": "An account with this email already exists"}), 400
         if "users_username_key" in err_str:
