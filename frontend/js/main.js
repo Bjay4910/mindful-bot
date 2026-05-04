@@ -143,7 +143,7 @@ function initAuthModal() {
             // Set session via Supabase client
             await _supabase.auth.setSession(data.session);
             overlay.classList.add('hidden');
-            showToast('Welcome back!', 'success');
+            showToast(`Welcome back, ${data.user.username}! 👋`, 'success');
             await updateNavState();
             if (window.onAuthSuccess) window.onAuthSuccess(data.user);
         } catch (err) {
@@ -175,7 +175,15 @@ function initAuthModal() {
                 showToast('Check your email to confirm your account.', 'default');
             }
         } catch (err) {
-            regErr.textContent = err.message;
+            if (err.message && err.message.includes('email already exists')) {
+                regErr.innerHTML = err.message + ' <a href="#" style="color:var(--color-primary);font-weight:500;">Log in instead</a>';
+                regErr.querySelector('a').addEventListener('click', e => {
+                    e.preventDefault();
+                    showPanel('login');
+                });
+            } else {
+                regErr.textContent = err.message;
+            }
             regErr.classList.add('visible');
         }
     });
